@@ -1,10 +1,10 @@
-구조 예시
+커밋 메세지 규칙
 
-<type>(<scope>):<subject> -- 헤더
-<BLANK LINE> -- 여백
-<body> -- 본문
-<BLANK LINE> -- 여백
-<footer> -- 바닥글
+type(scope):subject -- 헤더
+BLANK LINE -- 여백
+body -- 본문
+BLANK LINE -- 여백
+footer -- 바닥글
  
 
 구조 뜻
