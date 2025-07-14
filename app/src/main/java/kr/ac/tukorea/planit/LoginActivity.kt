@@ -30,7 +30,7 @@ class LoginActivity : AppCompatActivity() {
             Log.d("LoginActivity", "카카오 로그인 버튼 클릭됨")
 
             if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
-                // 카카오톡으로 로그인
+                // 카카오톡 로그인
                 UserApiClient.instance.loginWithKakaoTalk(this) { token: OAuthToken?, error: Throwable? ->
                     handleLoginResult(token, error)
                 }
