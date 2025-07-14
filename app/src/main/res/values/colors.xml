@@ -8,4 +8,15 @@
     <color name="gray">#6F6F6F</color>
     <color name="blue">#3B82F6</color>
     <color name="light_gray">#D1D5DB</color>
+
+    <color name="background">#F6F9FD</color>
+    <color name="lightsky_background">#EFF5FF</color>
+    <color name="lightsky_edge">#D4E2F9</color>
+<!--    <color name="blue">#2D6EEF</color>-->
+    <color name="white_background">#FCFDFE</color>
+    <color name="white_edge">#F1F2F5</color>
+    <color name="red">#E93A3A</color>
+    <color name="todo_undo">#BCBCBC</color>
+    <color name="todo_complete">#90F7A0</color>
+    <color name="temp_red">#ff0000</color>
 </resources>

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="#F9FBFF">
 
     <!-- 🔸 좌우 5% 가이드라인 -->
@@ -29,88 +30,93 @@
         app:layout_constraintGuide_percent="0.08" />
 
     <!-- 🔹 상단 헤더 -->
-    <LinearLayout
-        android:id="@+id/headerLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="@id/guideline_top"
-        app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintEnd_toEndOf="@id/guideline_end">
+<!--    <LinearLayout-->
+<!--        android:id="@+id/headerLayout"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:gravity="center"-->
+<!--        app:layout_constraintTop_toTopOf="@id/guideline_top"-->
+<!--        app:layout_constraintStart_toStartOf="@id/guideline_start"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/guideline_end">-->
 
-        <ImageView
-            android:id="@+id/btnPrevMonth"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_arrow_left"
-            android:contentDescription="이전 달" />
+<!--        <ImageView-->
+<!--            android:id="@+id/btnPrevMonth"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/ic_arrow_left"-->
+<!--            android:contentDescription="이전 달" />-->
 
-        <TextView
-            android:id="@+id/tvMonthYear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2025.07"
-            android:fontFamily="@font/pretendard_semibold"
-            android:textSize="16sp"
-            android:layout_marginHorizontal="24dp" />
+<!--        <TextView-->
+<!--            android:id="@+id/tvMonthYear"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="2025.07"-->
+<!--            android:fontFamily="@font/pretendard_semibold"-->
+<!--            android:textSize="16sp"-->
+<!--            android:layout_marginHorizontal="24dp" />-->
 
-        <ImageView
-            android:id="@+id/btnNextMonth"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_arrow_right"
-            android:contentDescription="다음 달" />
+<!--        <ImageView-->
+<!--            android:id="@+id/btnNextMonth"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/ic_arrow_right"-->
+<!--            android:contentDescription="다음 달" />-->
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+<!--        <View-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_weight="1" />-->
 
-        <ImageView
-            android:id="@+id/btnMenu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_menu"
-            android:contentDescription="메뉴"
-            android:layout_marginStart="8dp" />
-    </LinearLayout>
+<!--        <ImageView-->
+<!--            android:id="@+id/btnMenu"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/ic_menu"-->
+<!--            android:contentDescription="메뉴"-->
+<!--            android:layout_marginStart="8dp" />-->
+<!--    </LinearLayout>-->
 
     <!-- 🔹 캘린더 카드 -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/calendarCard"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout"
-        app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintEnd_toEndOf="@id/guideline_end">
-    </androidx.cardview.widget.CardView>
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:id="@+id/calendarCard"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        app:cardCornerRadius="16dp"-->
+<!--        app:cardElevation="4dp"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/headerLayout"-->
+<!--        app:layout_constraintStart_toStartOf="@id/guideline_start"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/guideline_end">-->
+<!--        -->
+<!--    </androidx.cardview.widget.CardView>-->
 
-    <!-- 🔹 할 일 카드 1 -->
-    <include
-        android:id="@+id/taskCard1"
-        layout="@layout/item_task"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        app:layout_constraintTop_toBottomOf="@id/calendarCard"
-        app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintEnd_toEndOf="@id/guideline_end" />
+<!--    &lt;!&ndash; 🔹 할 일 카드 1 &ndash;&gt;-->
+<!--    <include-->
+<!--        android:id="@+id/taskCard1"-->
+<!--        layout="@layout/item_task"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="15dp"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/calendarCard"-->
+<!--        app:layout_constraintStart_toStartOf="@id/guideline_start"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/guideline_end" />-->
 
-    <!-- 🔹 할 일 카드 2 -->
-    <include
-        android:id="@+id/taskCard2"
-        layout="@layout/item_task"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        app:layout_constraintTop_toBottomOf="@id/taskCard1"
-        app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintEnd_toEndOf="@id/guideline_end" />
-
+<!--    &lt;!&ndash; 🔹 할 일 카드 2 &ndash;&gt;-->
+<!--    <include-->
+<!--        android:id="@+id/taskCard2"-->
+<!--        layout="@layout/item_task"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="15dp"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/taskCard1"-->
+<!--        app:layout_constraintStart_toStartOf="@id/guideline_start"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/guideline_end" />-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/item_task" />
     <!-- 🔹 새 할 일 추가 버튼 -->
     <Button
         android:id="@+id/btnAddTask"
@@ -127,7 +133,7 @@
         android:paddingVertical="8dp"
         android:layout_marginTop="24dp"
         android:elevation="6dp"
-        app:layout_constraintTop_toBottomOf="@id/taskCard2"
+        app:layout_constraintTop_toBottomOf="@id/recyclerView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintEnd_toEndOf="@id/guideline_end" />

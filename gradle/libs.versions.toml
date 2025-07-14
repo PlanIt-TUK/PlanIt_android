@@ -1,6 +1,6 @@
 [versions]
 agp = "8.8.1"
-kotlin = "1.9.24"
+kotlin = "2.1.0" #캘린더 뷰 라이브러리를 적용하는 과정에서 변경하였습니다.
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -9,6 +9,8 @@ appcompat = "1.7.1"
 material = "1.12.0"
 activity = "1.10.1"
 constraintlayout = "2.2.1"
+#캘린더 뷰 라이브러리
+calendar-view="2.6.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -19,6 +21,8 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+#캘린더 뷰 라이브러리
+calendar = { module = "com.kizitonwose.calendar:view", version.ref = "calendar-view" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
