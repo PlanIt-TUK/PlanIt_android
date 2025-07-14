@@ -13,6 +13,9 @@
         android:theme="@style/Theme.PlanIt"
         tools:targetApi="31">
         <activity
+            android:name=".AddTaskActivity"
+            android:exported="false" />
+        <activity
             android:name=".SidebarActivity"
             android:exported="false" />
         <activity

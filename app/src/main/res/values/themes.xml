@@ -11,16 +11,63 @@
         <item name="rippleColor">@android:color/transparent</item>
     </style>
 
-
-    <style name="CalendarWeekday">
-
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:gravity">center</item>
-        <item name="android:fontFamily">@font/pretendard_medium</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/gray</item>
+    <!-- 공통 원형 색상 뷰 스타일 -->
+    <style name="ColorCircleBase">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:background">@drawable/bg_color_circle</item>
     </style>
+
+    <!-- 색상별 스타일 -->
+    <style name="colorRed" parent="ColorCircleBase">
+        <item name="android:backgroundTint">#FF384A</item>
+    </style>
+
+    <style name="colorPink" parent="ColorCircleBase">
+        <item name="android:backgroundTint">#FFA9A9</item>
+    </style>
+
+    <style name="colorOrange" parent="ColorCircleBase">
+        <item name="android:backgroundTint">#FB923C</item>
+    </style>
+
+    <style name="colorYellow" parent="ColorCircleBase">
+        <item name="android:backgroundTint">#FBBF24</item>
+    </style>
+
+    <style name="colorGreen" parent="ColorCircleBase">
+        <item name="android:backgroundTint">#00B894</item>
+    </style>
+
+    <style name="colorBlue" parent="ColorCircleBase">
+        <item name="android:backgroundTint">#0984E3</item>
+    </style>
+
+    <style name="colorViolet" parent="ColorCircleBase">
+        <item name="android:backgroundTint">#FF4889</item>
+    </style>
+
+    <style name="colorLavender" parent="ColorCircleBase">
+        <item name="android:backgroundTint">#A29BFE</item>
+    </style>
+
+    <style name="colorAmber" parent="ColorCircleBase">
+        <item name="android:backgroundTint">#A16207</item>
+    </style>
+
+    <style name="colorGrayLight" parent="ColorCircleBase">
+        <item name="android:backgroundTint">#9CA3AF</item>
+    </style>
+
+    <style name="colorGrayDark" parent="ColorCircleBase">
+        <item name="android:backgroundTint">#5E728F</item>
+    </style>
+
+    <style name="colorBlack" parent="ColorCircleBase">
+        <item name="android:backgroundTint">#3E4147</item>
+    </style>
+
+
 
 </resources>
