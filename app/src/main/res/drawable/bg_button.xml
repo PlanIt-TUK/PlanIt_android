@@ -1,0 +1,39 @@
+<!-- res/drawable/bg_gradient_button.xml -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- pressed or focused (hover) 상태 -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="0"
+                android:startColor="#2563EB"
+                android:endColor="#1E40AF"
+                android:type="linear" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="0"
+                android:startColor="#2563EB"
+                android:endColor="#1E40AF"
+                android:type="linear" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+
+    <!-- 기본(normal) 상태 -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="0"
+                android:startColor="#3B82F6"
+                android:endColor="#2563EB"
+                android:type="linear" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+
+</selector>
