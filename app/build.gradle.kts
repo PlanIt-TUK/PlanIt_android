@@ -1,3 +1,12 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+val keysPropertiesFile = rootProject.file("keys.properties")
+val keysProperties = Properties()
+keysProperties.load(FileInputStream(keysPropertiesFile))
+
+val kakaoNativeKey: String = keysProperties["KAKAO_NATIVE_KEY"] as String
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -17,8 +26,16 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+    // 🔹 BuildConfig에 앱 키 전달
     buildTypes {
-        release {
+        getByName("debug") {
+            buildConfigField("String", "KAKAO_NATIVE_KEY", "\"$kakaoNativeKey\"")
+        }
+        getByName("release") {
+            buildConfigField("String", "KAKAO_NATIVE_KEY", "\"$kakaoNativeKey\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -26,6 +43,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -36,7 +54,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.kakao.user)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
