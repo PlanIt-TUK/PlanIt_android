@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="16dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:layout_marginTop="20dp">
+
+        <!-- 가이드라인 -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.05" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.95" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.0" />
+
+        <!-- 🔹 TopBar -->
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="341dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="뒤로가기"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_x"
+            app:layout_constraintEnd_toEndOf="@id/guideline_end"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.1" />
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/pretendard_bold"
+            android:gravity="center"
+            android:text="새 보드 추가"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_back"
+            app:layout_constraintStart_toStartOf="@+id/guideline_start"
+            app:layout_constraintTop_toTopOf="@+id/guideline_top" />
+
+        <!-- 🔹 ScrollView -->
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            android:layout_marginTop="20dp"
+            android:scrollbars="none"
+            app:layout_constraintTop_toBottomOf="@id/titleText"
+            app:layout_constraintStart_toStartOf="@id/guideline_start"
+            app:layout_constraintEnd_toEndOf="@id/guideline_end"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:padding="16dp">
+
+                <!-- 제목 CardView -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_card"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:text="보드명"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/pretendard_medium"
+                            android:textColor="@color/black"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <EditText
+                            android:id="@+id/editTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_input_box"
+                            android:fontFamily="@font/pretendard_medium"
+                            android:hint="보드 이름을 입력하세요"
+                            android:textSize="13sp"
+                            android:padding="10dp"
+                            android:layout_marginTop="8dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+
+                <!-- 색상 선택 CardView -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_card"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="색상"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/pretendard_medium"
+                            android:textColor="@color/black"
+                            android:layout_marginBottom="8dp" />
+
+                        <GridLayout
+                            android:id="@+id/colorGrid"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:columnCount="4"
+                            android:alignmentMode="alignMargins"
+                            android:rowCount="3"
+                            android:useDefaultMargins="true"
+                            android:layout_gravity="center">
+
+                            <View
+                                android:id="@+id/colorRed"
+                                style="@style/colorRed"
+                                android:layout_margin="10dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+                            <View
+                                android:id="@+id/colorPink"
+                                style="@style/colorPink"
+                                android:layout_margin="10dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+                            <View
+                                android:id="@+id/colorOrange"
+                                style="@style/colorOrange"
+                                android:layout_margin="10dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+                            <View
+                                android:id="@+id/colorYellow"
+                                style="@style/colorYellow"
+                                android:layout_margin="10dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+                            <View
+                                android:id="@+id/colorGreen"
+                                style="@style/colorGreen"
+                                android:layout_margin="10dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+                            <View
+                                android:id="@+id/colorBlue"
+                                style="@style/colorBlue"
+                                android:layout_margin="10dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+                            <View
+                                android:id="@+id/colorViolet"
+                                style="@style/colorViolet"
+                                android:layout_margin="10dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+                            <View
+                                android:id="@+id/colorLavender"
+                                style="@style/colorLavender"
+                                android:layout_margin="10dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+                            <View
+                                android:id="@+id/colorAmber"
+                                style="@style/colorAmber"
+                                android:layout_margin="10dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+                            <View
+                                android:id="@+id/colorGrayLight"
+                                style="@style/colorGrayLight"
+                                android:layout_margin="10dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+                            <View
+                                android:id="@+id/colorGrayDark"
+                                style="@style/colorGrayDark"
+                                android:layout_margin="10dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+                            <View
+                                android:id="@+id/colorBlack"
+                                style="@style/colorBlack"
+                                android:layout_margin="10dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+                        </GridLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="90dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:weightSum="2">
+
+                    <Button
+                        android:id="@+id/btnCancel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="30dp"
+                        style="@style/Widget.PlanIt.Button"
+                        android:text="취소"
+                        android:textColor="@color/gray"
+                        android:fontFamily="@font/pretendard_medium"
+                        android:textSize="13sp"
+                        android:background="@drawable/bg_button_cancel"/>
+
+                    <Button
+                        android:id="@+id/btnAddTask"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        style="@style/Widget.PlanIt.Button"
+                        android:text="추가하기"
+                        android:textColor="@color/bg_main"
+                        android:fontFamily="@font/pretendard_medium"
+                        android:textSize="13sp"
+                        android:background="@drawable/bg_button"/>
+                </LinearLayout>
+
+                <!-- 추가 버튼 -->
+            </LinearLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

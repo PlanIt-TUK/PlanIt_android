@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_main"
+    android:id="@+id/main">
+
+    <!-- 가이드라인 -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <!-- 🔹 TopBar -->
+    <ImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="뒤로가기"
+        android:src="@drawable/ic_back"
+        android:scaleType="centerInside"
+        app:layout_constraintTop_toTopOf="@id/guideline_top"
+        app:layout_constraintBottom_toBottomOf="@+id/project_name"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.1" />
+
+    <TextView
+        android:id="@+id/project_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="프로젝트 1"
+        android:textSize="18sp"
+        android:fontFamily="@font/pretendard_bold"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/guideline_top"
+        app:layout_constraintStart_toEndOf="@id/btn_back"
+        app:layout_constraintEnd_toStartOf="@id/btn_setting" />
+
+    <ImageButton
+        android:id="@+id/btn_setting"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="관리하기"
+        android:src="@drawable/ic_setting"
+        android:scaleType="centerInside"
+        app:layout_constraintTop_toTopOf="@id/guideline_top"
+        app:layout_constraintBottom_toBottomOf="@+id/project_name"
+        app:layout_constraintEnd_toStartOf="@id/guideline_end"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.1" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="21dp"
+        app:layout_constraintTop_toBottomOf="@id/project_name"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_bottom" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

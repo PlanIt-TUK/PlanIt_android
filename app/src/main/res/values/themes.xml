@@ -68,6 +68,14 @@
         <item name="android:backgroundTint">#3E4147</item>
     </style>
 
+    <!-- 플로팅 디자인 -->
+    <style name="Widget.Custom.FAB" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="shapeAppearance">@style/ShapeAppearance.FAB.Rounded</item>
+    </style>
 
+    <style name="ShapeAppearance.FAB.Rounded" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 
 </resources>
