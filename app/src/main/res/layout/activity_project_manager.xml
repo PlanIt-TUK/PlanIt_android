@@ -205,7 +205,6 @@
       </androidx.cardview.widget.CardView>
 
       <!-- 🔸 프로젝트 삭제 경고 -->
-      <!-- 프로젝트 삭제 경고 카드 -->
       <androidx.cardview.widget.CardView
           android:id="@+id/deleteCard"
           android:layout_width="match_parent"
