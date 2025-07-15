@@ -50,14 +50,20 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
+        binding.btnAddTask.setOnClickListener{
+            // TODO: 할 일 추가 ui 접목하여 유저 입력 받아오기
+            addNewTask(title="새 할일","12:30","프로젝트3")
+            Toast.makeText(this,"할 일 생성: 새 할일", Toast.LENGTH_SHORT).show()
+            // TODO: 백엔드 연결 -> 할 일 서버에 저장(아님말고)
+        }
         setupCalendar()
         // RecyclerView 초기화 및 설정
         setupRecyclerView()
 
         // 샘플 데이터 로드
         //실제 백엔드와 연동시 주석처리해주시면 됩니다.
-        loadSampleTasks()
+        //loadSampleTasks()
+
 
     }
 
@@ -67,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         with(binding) {
             myCalendar.setOnDateSelectedListener { selectedDate ->
                 // 선택된 날짜 표시
-                tvSelectedDate.text = "선택된 날짜: $selectedDate"
+                //tvSelectedDate.text = "선택된 날짜: $selectedDate"
 
                 // 선택된 날짜에 따른 추가 작업
                 // TODO: 선택된 날짜별 할 일 불러오기
@@ -106,7 +112,7 @@ class MainActivity : AppCompatActivity() {
                 parent: RecyclerView,
                 state: RecyclerView.State
             ) {
-                outRect.bottom = 16 // 아이템 간 16dp 간격
+                outRect.bottom = 32 // 아이템 간 16dp 간격
             }
         }
         recyclerView.addItemDecoration(itemDecoration)
@@ -251,16 +257,16 @@ class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private fun updateUIForCompletionState(isCompleted: Boolean) {
         if (isCompleted) {
             // 완료된 태스크: 텍스트 색상 변경 및 취소선 추가
-            taskTitle.setTextColor(ContextCompat.getColor(itemView.context, R.color.todo_complete))
+            //taskTitle.setTextColor(ContextCompat.getColor(itemView.context, R.color.todo_complete))
             taskTitle.paintFlags = taskTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            taskProject.setTextColor(ContextCompat.getColor(itemView.context, R.color.todo_complete))
-            taskTime.setTextColor(ContextCompat.getColor(itemView.context, R.color.todo_complete))
+            //taskProject.setTextColor(ContextCompat.getColor(itemView.context, R.color.todo_complete))
+            //taskTime.setTextColor(ContextCompat.getColor(itemView.context, R.color.todo_complete))
         } else {
             // 미완료된 태스크: 원래 색상으로 복원
-            taskTitle.setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
+            //taskTitle.setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
             taskTitle.paintFlags = taskTitle.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-            taskProject.setTextColor(Color.parseColor("#9A9A9A"))
-            taskTime.setTextColor(ContextCompat.getColor(itemView.context, R.color.gray))
+            //taskProject.setTextColor(Color.parseColor("#9A9A9A"))
+            //taskTime.setTextColor(ContextCompat.getColor(itemView.context, R.color.gray))
         }
     }
 }

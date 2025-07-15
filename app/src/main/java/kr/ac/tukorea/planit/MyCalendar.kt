@@ -85,6 +85,11 @@ class MyCalendar @JvmOverloads constructor(
                 updateYearMonthText()
             }
 
+            //햄버거 메뉴 클릭 리스너
+            iconHamberger.setOnClickListener{
+                // TODO: 햄버거 메뉴 클릭시 사이드바 불러오기
+            }
+
             // 오늘 날짜 이전, 이후 연월은 100개월 전까지 표시
             val startMonth = currentMonth.minusMonths(100)
             val endMonth = currentMonth.plusMonths(100)
@@ -145,12 +150,14 @@ class MyCalendar @JvmOverloads constructor(
 //                            container.textView.setTextColor(Color.GRAY)
 //                        }
                         data.position == DayPosition.MonthDate -> {
+
                             // 현재 월에 속한 과거 또는 오늘 날짜는 요일에 따라 색상 설정
-                            when (data.date.dayOfWeek) {
-                                DayOfWeek.SUNDAY -> container.textView.setTextColor(Color.RED)
-                                DayOfWeek.SATURDAY -> container.textView.setTextColor(Color.BLUE)
-                                else -> container.textView.setTextColor(Color.BLACK)
-                            }
+//                            when (data.date.dayOfWeek) {
+//                                DayOfWeek.SUNDAY -> container.textView.setTextColor(Color.RED)
+//                                DayOfWeek.SATURDAY -> container.textView.setTextColor(Color.BLUE)
+//                                else -> container.textView.setTextColor(Color.BLACK)
+//                            }
+                            container.textView.setTextColor(Color.BLACK)
                         }
 
                         else -> {
@@ -179,8 +186,8 @@ class MyCalendar @JvmOverloads constructor(
                             }
                             //이걸로 크기를 조절해서 ui에 맞추려고 했는데 왜인지 오류가 나는것같네요...
 //                            layoutParams = layoutParams.apply {
-//                                width = 8.dpToPx()
-//                                height = 8.dpToPx()
+//                                width = 15.dpToPx()
+//                                height = 15.dpToPx()
 //                            }
                         }
 
