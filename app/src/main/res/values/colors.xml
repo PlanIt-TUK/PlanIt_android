@@ -9,7 +9,6 @@
     <color name="dark_gray">#5C5C5C</color>
     <color name="blue">#3B82F6</color>
     <color name="light_gray">#D1D5DB</color>
-<<<<<<< HEAD
     <color name="light_blue">#EFF5FF</color>
 
     <color name="colorRed">#FF384A</color>
@@ -26,7 +25,6 @@
     <color name="colorBlack">#3E4147</color>
 
 
-=======
 
     <color name="background">#F6F9FD</color>
     <color name="lightsky_background">#EFF5FF</color>
@@ -38,5 +36,4 @@
     <color name="todo_undo">#BCBCBC</color>
     <color name="todo_complete">#90F7A0</color>
     <color name="temp_red">#ff0000</color>
->>>>>>> master
 </resources>
