@@ -66,4 +66,6 @@ dependencies {
     //캘린더 뷰 라이브러리
     implementation(libs.calendar)
     implementation("androidx.recyclerview:recyclerview:1.4.0")
+    implementation("com.kakao.sdk:v2-user:2.19.0") // 최신 안정 버전
+
 }

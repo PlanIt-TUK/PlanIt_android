@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <!-- 네트워크 사용 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- (선택) 연결 상태 확인용 – 일부 라이브러리에서 필요 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:name=".MyApplication"
@@ -16,15 +20,20 @@
         <activity
             android:name=".MySchedulerActivity"
             android:exported="false" />
+        <!-- ① LoginActivity: VIEW 인텐트-필터 제거 -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
 
-            <!-- 이미 존재할 수 있는 WebView용 인텐트 필터는 아래처럼 유지 -->
+        <!-- ② AuthCodeHandlerActivity: 딥링크 전담 -->
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>

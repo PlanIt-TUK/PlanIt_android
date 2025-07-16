@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import kr.ac.tukorea.planit.databinding.ActivityLoginBinding
+import com.kakao.sdk.common.util.Utility
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -18,6 +19,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        Log.i("KakaoKeyHash", Utility.getKeyHash(this))
 
         // ✅ ViewBinding 적용
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -48,18 +50,18 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun handleLoginResult(token: OAuthToken?, error: Throwable?) {
+        Log.d("LoginActivity", "handleLoginResult() 실행됨")
+
         if (error != null) {
             Log.e("LoginActivity", "카카오 로그인 실패", error)
-            Toast.makeText(this, "카카오 로그인 실패: ${error.message}", Toast.LENGTH_LONG).show()
         } else if (token != null) {
             Log.i("LoginActivity", "카카오 로그인 성공: ${token.accessToken}")
-            Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
 
             UserApiClient.instance.me { user, userError ->
                 if (userError != null) {
-                    Toast.makeText(this, "사용자 정보 실패", Toast.LENGTH_SHORT).show()
+                    Log.e("LoginActivity", "사용자 정보 요청 실패", userError)
                 } else if (user != null) {
-                    Log.i("LoginActivity", "이메일: ${user.kakaoAccount?.email}")
+                    Log.i("LoginActivity", "사용자 정보 성공: 이메일=${user.kakaoAccount?.email}")
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     finish()
