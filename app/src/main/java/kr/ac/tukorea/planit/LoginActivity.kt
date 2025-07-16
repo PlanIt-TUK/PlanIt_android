@@ -12,6 +12,14 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import kr.ac.tukorea.planit.databinding.ActivityLoginBinding
 import com.kakao.sdk.common.util.Utility
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import java.io.IOException
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -60,13 +68,48 @@ class LoginActivity : AppCompatActivity() {
             UserApiClient.instance.me { user, userError ->
                 if (userError != null) {
                     Log.e("LoginActivity", "사용자 정보 요청 실패", userError)
-                } else if (user != null) {
-                    Log.i("LoginActivity", "사용자 정보 성공: 이메일=${user.kakaoAccount?.email}")
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    return@me
                 }
+                if (user == null) {
+                    Log.e("LoginActivity", "사용자 정보 없음")
+                    return@me
+                }
+
+                val userEmail = user.kakaoAccount?.email ?: ""
+                val userNickname = user.kakaoAccount?.profile?.nickname ?: ""
+                val userImage = user.kakaoAccount?.profile?.profileImageUrl ?: ""
+
+                val client = OkHttpClient()
+                val json = """
+                    {
+                        "user_email": "$userEmail",
+                        "user_nickname": "$userNickname",
+                        "user_image": "$userImage"
+                    }
+                """.trimIndent()
+
+                val requestBody = json.toRequestBody("application/json; charset=utf-8".toMediaType())
+                val request = Request.Builder()
+                    .url("http://56.155.134.194:8000/add_user") // ← 여기에 실제 EC2 주소 입력
+                    .post(requestBody)
+                    .build()
+
+                client.newCall(request).enqueue(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        Log.e("LoginActivity", "백엔드 전송 실패", e)
+                    }
+
+                    override fun onResponse(call: Call, response: Response) {
+                        Log.d("LoginActivity", "백엔드 전송 성공: ${response.code}")
+                        runOnUiThread {
+                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+                    }
+                })
             }
+
         }
     }
 }
