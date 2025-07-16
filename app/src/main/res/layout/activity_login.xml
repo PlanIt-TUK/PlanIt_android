@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.10" /> <!-- 10% 아래부터 시작 -->
+        app:layout_constraintGuide_percent="0.10" />
 
     <!-- 카드 시작 Guideline (45% 아래에서 카드 시작) -->
     <androidx.constraintlayout.widget.Guideline
@@ -34,8 +34,7 @@
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="@id/guidelineSafeTop"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-         />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!-- 로고 -->
     <ImageView
@@ -50,7 +49,6 @@
         app:layout_constraintTop_toBottomOf="@id/appTitle"
         app:layout_constraintWidth_percent="0.4" />
 
-
     <!-- 로그인 카드 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/loginCard"
@@ -64,13 +62,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/guidelineCardTop">
 
-        <!-- 카드 내부 가이드라인: 카드 높이의 40% 지점에 버튼 배치 -->
+        <!-- 카드 내부 가이드라인: 카드 높이의 35% 지점에 버튼 배치 -->
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineButtonTop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.35" /> <!-- 카드 기준 40% 지점 -->
+            app:layout_constraintGuide_percent="0.35" />
 
         <TextView
             android:id="@+id/welcomeText"
@@ -87,14 +85,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- 카카오 로그인 버튼 - 카드 중앙보다 위쪽 (40%) 위치) -->
+        <!-- ✅ 카카오 로그인 버튼: 클릭 가능 영역 확인 위해 배경 추가 -->
         <ImageButton
             android:id="@+id/kakaoLoginButton"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@null"
+            android:background="@drawable/bg_kakao_button_clicktest"
             android:contentDescription="카카오 로그인 버튼"
             android:scaleType="fitXY"
             android:src="@drawable/button_kakao_login"

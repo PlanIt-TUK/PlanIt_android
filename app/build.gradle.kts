@@ -1,3 +1,12 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+val keysPropertiesFile = rootProject.file("keys.properties")
+val keysProperties = Properties()
+keysProperties.load(FileInputStream(keysPropertiesFile))
+
+val kakaoNativeKey: String = keysProperties["KAKAO_NATIVE_KEY"] as String
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,7 +15,7 @@ plugins {
 android {
     namespace = "kr.ac.tukorea.planit"
     compileSdk = 35
-
+    viewBinding { enable=true }
     defaultConfig {
         applicationId = "kr.ac.tukorea.planit"
         minSdk = 28
@@ -17,8 +26,16 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+    // 🔹 BuildConfig에 앱 키 전달
     buildTypes {
-        release {
+        getByName("debug") {
+            buildConfigField("String", "KAKAO_NATIVE_KEY", "\"$kakaoNativeKey\"")
+        }
+        getByName("release") {
+            buildConfigField("String", "KAKAO_NATIVE_KEY", "\"$kakaoNativeKey\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -26,6 +43,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -36,7 +54,7 @@ android {
 }
 
 dependencies {
-
+    implementation(libs.kakao.user)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -45,4 +63,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    //캘린더 뷰 라이브러리
+    implementation(libs.calendar)
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
+    implementation("com.kakao.sdk:v2-user:2.19.0") // 최신 안정 버전
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
 }
