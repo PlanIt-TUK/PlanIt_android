@@ -226,6 +226,15 @@ class MyCalendar @JvmOverloads constructor(
             }
         }
     }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun selectToday() {
+        val today = LocalDate.now()
+        val oldDate = selectedDate
+        selectedDate = today
+        oldDate?.let { date -> binding.mcCustom.notifyDateChanged(date) }
+        binding.mcCustom.notifyDateChanged(today)
+        onDateSelectedListener?.invoke(getSelectedDateFormatted())
+    }
 
     private fun updateYearMonthText() {
         binding.tvYearMonth.text = "${currentMonth.year}년 ${currentMonth.monthValue}월"
@@ -242,3 +251,4 @@ class DayViewContainer(view: View) : ViewContainer(view) {
 class MonthViewContainer(view: View) : ViewContainer(view) {
     val titlesContainer = view as ViewGroup
 }
+
