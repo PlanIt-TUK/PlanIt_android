@@ -1,42 +1,46 @@
 package kr.ac.tukorea.planit
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageButton
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
+import kr.ac.tukorea.planit.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityLoginBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_login)
 
-        // system bar 영역 패딩 처리
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.login)) { v, insets ->
+        // ✅ ViewBinding 적용
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // ✅ 시스템 바 영역 패딩
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        // 로그인 버튼 찾기
-        val kakaoLoginButton = findViewById<ImageButton>(R.id.kakaoLoginButton)
-
-        kakaoLoginButton.setOnClickListener {
+        // ✅ 카카오 로그인 버튼 클릭 리스너 설정
+        binding.kakaoLoginButton.setOnClickListener {
             Log.d("LoginActivity", "카카오 로그인 버튼 클릭됨")
+            Toast.makeText(this, "로그인 시도", Toast.LENGTH_SHORT).show()
 
             if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
-                // 카카오톡 로그인
-                UserApiClient.instance.loginWithKakaoTalk(this) { token: OAuthToken?, error: Throwable? ->
+                UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
                     handleLoginResult(token, error)
                 }
             } else {
-                // 카카오 계정(웹뷰) 로그인
-                UserApiClient.instance.loginWithKakaoAccount(this) { token: OAuthToken?, error: Throwable? ->
+                UserApiClient.instance.loginWithKakaoAccount(this) { token, error ->
                     handleLoginResult(token, error)
                 }
             }
@@ -46,19 +50,19 @@ class LoginActivity : AppCompatActivity() {
     private fun handleLoginResult(token: OAuthToken?, error: Throwable?) {
         if (error != null) {
             Log.e("LoginActivity", "카카오 로그인 실패", error)
+            Toast.makeText(this, "카카오 로그인 실패: ${error.message}", Toast.LENGTH_LONG).show()
         } else if (token != null) {
             Log.i("LoginActivity", "카카오 로그인 성공: ${token.accessToken}")
+            Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
 
-            // 사용자 정보 요청
             UserApiClient.instance.me { user, userError ->
                 if (userError != null) {
-                    Log.e("LoginActivity", "사용자 정보 요청 실패", userError)
+                    Toast.makeText(this, "사용자 정보 실패", Toast.LENGTH_SHORT).show()
                 } else if (user != null) {
-                    Log.i("LoginActivity", "사용자 정보:")
-                    Log.i("LoginActivity", "닉네임: ${user.kakaoAccount?.profile?.nickname}")
                     Log.i("LoginActivity", "이메일: ${user.kakaoAccount?.email}")
-
-                    // TODO: 로그인 성공 처리 → 메인화면 이동 or 서버 전송 등
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }
             }
         }

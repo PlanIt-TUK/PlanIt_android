@@ -15,7 +15,7 @@ plugins {
 android {
     namespace = "kr.ac.tukorea.planit"
     compileSdk = 35
-
+    viewBinding { enable=true }
     defaultConfig {
         applicationId = "kr.ac.tukorea.planit"
         minSdk = 28
@@ -63,4 +63,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    //캘린더 뷰 라이브러리
+    implementation(libs.calendar)
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
 }
