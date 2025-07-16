@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,14 +21,21 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.planit.databinding.CalendarMainViewBinding
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 // 1. 태스크 데이터 클래스
+
 data class Task(
     val id: Int,
-    val time: String,
-    val title: String,
-    val project: String,
-    val isCompleted: Boolean = false
+    val teamName: String,
+    val taskName: String,
+    val taskStart: String,
+    val taskEnd: String,
+    val taskState: Boolean,
+    val taskTarget: String,
+    val userEmail: String
 )
 
 class MainActivity : AppCompatActivity() {
@@ -37,6 +45,7 @@ class MainActivity : AppCompatActivity() {
     // RecyclerView와 Adapter 변수 선언
     private lateinit var recyclerView: RecyclerView
     private lateinit var taskAdapter: TaskAdapter
+    private lateinit var sampleTasks: List<Task>
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         // 샘플 데이터 로드
         //실제 백엔드와 연동시 주석처리해주시면 됩니다.
         loadSampleTasks()
-
+        binding.myCalendar.selectToday()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -68,9 +77,52 @@ class MainActivity : AppCompatActivity() {
             myCalendar.setOnDateSelectedListener { selectedDate ->
                 // 선택된 날짜 표시
                 tvSelectedDate.text = "선택된 날짜: $selectedDate"
-
                 // 선택된 날짜에 따른 추가 작업
                 // TODO: 선택된 날짜별 할 일 불러오기
+                // 날짜에 해당하는 태스크만 필터링
+
+                try {
+                    val inputFormatter = DateTimeFormatter.ofPattern("yyyy.M.d") // ex: "2025.7.18"
+                    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                    val selectedLocalDate = LocalDate.parse(selectedDate, inputFormatter)
+
+                    Log.d("Debug", "selectedDate: $selectedLocalDate")
+
+                    val filteredTasks = sampleTasks.filter { task ->
+                        try {
+                            val hasStart = task.taskStart.isNotBlank()
+                            val hasEnd = task.taskEnd.isNotBlank()
+
+                            val startDate = if (hasStart)
+                                LocalDateTime.parse(task.taskStart, dateFormatter).toLocalDate()
+                            else null
+
+                            val endDate = if (hasEnd)
+                                LocalDateTime.parse(task.taskEnd, dateFormatter).toLocalDate()
+                            else null
+
+                            when {
+                                hasStart && hasEnd -> !selectedLocalDate.isBefore(startDate) && !selectedLocalDate.isAfter(endDate)
+                                hasStart -> selectedLocalDate == startDate
+                                hasEnd -> selectedLocalDate == endDate
+                                else -> false
+                            }
+                        } catch (e: Exception) {
+                            false
+                        }
+                    }
+
+                    Log.d("MainActivity", "Filtered tasks count: ${filteredTasks.size}")
+                    filteredTasks.forEach { task ->
+                        Log.d("MainActivity", "Task: id=${task.id}, taskStart=${task.taskStart}, taskEnd=${task.taskEnd}, title=${task.taskName}")
+                    }
+
+                    taskAdapter.updateData(filteredTasks)
+
+                } catch (e: Exception) {
+                    Log.e("MainActivity", "날짜 파싱 오류", e)
+                    taskAdapter.updateData(emptyList())
+                }
 
             }
         }
@@ -119,15 +171,14 @@ class MainActivity : AppCompatActivity() {
      * 샘플 태스크 데이터를 로드하는 메서드
      */
     private fun loadSampleTasks() {
-        val sampleTasks = listOf(
-            Task(1, "09:00", "프로젝트 미팅", "프로젝트 A"),
-            Task(2, "10:30", "코드 리뷰", "프로젝트 B"),
-            Task(3, "14:00", "디자인 검토", "프로젝트 A"),
-            Task(4, "16:00", "개발 작업", "프로젝트 C"),
-            Task(5, "18:00", "문서 작성", "프로젝트 B", true) // 완료된 태스크
+        sampleTasks = listOf(
+            Task(id = 1, teamName = "Team Alpha", taskName = "기획안 작성", taskStart = "2025-07-15 09:00:00", taskEnd = "2025-07-15 12:00:00", taskState = false, taskTarget = "프로젝트 A", userEmail = "user1@example.com"),
+            Task(id = 2, teamName = "Team Alpha", taskName = "디자인 회의", taskStart = "2025-07-16 14:00:00", taskEnd = "2025-07-16 15:30:00", taskState = false, taskTarget = "프로젝트 A", userEmail = "user2@example.com"),
+            Task(id = 3, teamName = "Team Beta", taskName = "개발 작업", taskStart = "2025-07-16 00:00:00", taskEnd = "2025-07-18 18:00:00", taskState = false, taskTarget = "프로젝트 B", userEmail = "user3@example.com"),
+            Task(id = 4, teamName = "Team Beta", taskName = "기능 테스트", taskStart = "2025-07-16 00:00:00", taskEnd = "2025-07-17 23:59:59", taskState = false, taskTarget = "프로젝트 B", userEmail = "user4@example.com"),
+            Task(id = 5, teamName = "Team Gamma", taskName = "마무리 정리", taskStart = "2025-07-17 10:00:00", taskEnd = "2025-07-18 18:00:00", taskState = true, taskTarget = "프로젝트 C", userEmail = "user5@example.com")
         )
-
-        taskAdapter.updateData(sampleTasks)
+        //taskAdapter.updateData(sampleTasks)
     }
 
     /**
@@ -138,7 +189,7 @@ class MainActivity : AppCompatActivity() {
         // 태스크 상세 정보 표시 또는 편집 화면으로 이동
         Toast.makeText(
             this,
-            "태스크 선택: ${task.title}",
+            "태스크 선택: ${task.taskName}",
             Toast.LENGTH_SHORT
         ).show()
 
@@ -158,7 +209,7 @@ class MainActivity : AppCompatActivity() {
         updateTaskCompletionStatus(task.id, isChecked)
 
         // 완료/미완료 상태에 따른 메시지 표시
-        val message = if (isChecked) "태스크 완료: ${task.title}" else "태스크 미완료: ${task.title}"
+        val message = if (isChecked) "태스크 완료: ${task.taskName}" else "태스크 미완료: ${task.taskName}"
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
@@ -176,12 +227,18 @@ class MainActivity : AppCompatActivity() {
     /**
      * 새 태스크를 추가하는 메서드
      */
-    fun addNewTask(title: String, time: String, project: String) {
+    fun addNewTask(taskName: String, taskStart: String, taskEnd: String, taskTarget: String,
+        teamName: String, taskState: Boolean = false, userEmail: String
+    ) {
         val newTask = Task(
             id = System.currentTimeMillis().toInt(),
-            time = time,
-            title = title,
-            project = project
+            teamName = teamName,
+            taskName = taskName,
+            taskStart = taskStart,
+            taskEnd = taskEnd,
+            taskState = taskState,
+            taskTarget = taskTarget,
+            userEmail = userEmail
         )
         taskAdapter.addTask(newTask)
 
@@ -222,13 +279,42 @@ class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         taskCheckBox.setOnCheckedChangeListener(null)
 
         // 데이터를 각 뷰에 설정
-        taskTime.text = task.time
-        taskTitle.text = task.title
-        taskProject.text = task.project
-        taskCheckBox.isChecked = task.isCompleted
+        val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+        val dateFormatter = DateTimeFormatter.ofPattern("MM.dd")
+
+        val start = try {
+            LocalDateTime.parse(task.taskStart, inputFormatter)
+        } catch (e: Exception) {
+            null
+        }
+        val end = try {
+            LocalDateTime.parse(task.taskEnd, inputFormatter)
+        } catch (e: Exception) {
+            null
+        }
+
+        val timeText = when {
+            start != null && end != null -> {
+                if (start.toLocalDate() == end.toLocalDate()) {
+                    // 같은 날짜: 시간 줄바꿈 후 ~ 종료시간
+                    val startTime = start.format(timeFormatter)
+                    val endTime = end.format(timeFormatter)
+                    "   $startTime\n~ $endTime"
+                } else {
+                    // 날짜 다름: ~ MM.dd
+                    "~ ${end.format(dateFormatter)}"
+                }
+            }
+            else -> "         " // 파싱 실패 시 공백
+        }
+        taskTime.text = timeText
+        taskTitle.text = task.taskName
+        taskProject.text = task.teamName
+        taskCheckBox.isChecked = task.taskState
 
         // 완료 상태에 따른 UI 변경
-        updateUIForCompletionState(task.isCompleted)
+        updateUIForCompletionState(task.taskState)
 
         // 아이템 클릭 리스너 설정 (체크박스 제외)
         itemView.setOnClickListener {
@@ -238,7 +324,7 @@ class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         // 체크박스 클릭 리스너 설정 (리스너 재설정)
         taskCheckBox.setOnCheckedChangeListener { _, isChecked ->
             // 현재 상태와 다를 때만 콜백 호출
-            if (isChecked != task.isCompleted) {
+            if (isChecked != task.taskState) {
                 onCheckboxClick(task, isChecked)
             }
         }
@@ -305,7 +391,21 @@ class TaskAdapter(
      */
     fun updateData(newList: List<Task>) {
         taskList.clear()
-        taskList.addAll(newList)
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+        // 정렬: 완료 여부 → 마감일 빠른 순
+        val sortedList = newList.sortedWith(compareBy<Task> { it.taskState }  // false(미완료) → true(완료)
+            .thenBy {
+                try {
+                    LocalDateTime.parse(it.taskEnd, formatter)
+                } catch (e: Exception) {
+                    LocalDateTime.MAX // 파싱 실패 시 가장 뒤로
+                }
+            }
+        )
+
+        taskList.addAll(sortedList)
         notifyDataSetChanged()
     }
 
@@ -317,7 +417,7 @@ class TaskAdapter(
     fun updateTaskCompletion(taskId: Int, isCompleted: Boolean) {
         val index = taskList.indexOfFirst { it.id == taskId }
         if (index != -1) {
-            taskList[index] = taskList[index].copy(isCompleted = isCompleted)
+            taskList[index] = taskList[index].copy(taskState = isCompleted)
             notifyItemChanged(index)
         }
     }
@@ -358,7 +458,7 @@ class TaskAdapter(
      */
     fun removeCompletedTasks() {
         val completedIndices = taskList.mapIndexedNotNull { index, task ->
-            if (task.isCompleted) index else null
+            if (task.taskState) index else null
         }.reversed() // 뒤에서부터 삭제
 
         completedIndices.forEach { index ->
