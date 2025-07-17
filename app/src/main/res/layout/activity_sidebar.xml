@@ -82,7 +82,7 @@
         android:id="@+id/current_project_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="프로젝트 2"
+        android:text="개인 프로젝트"
         android:textSize="14sp"
         android:textColor="#000000"
         android:fontFamily="@font/pretendard_bold"
@@ -115,77 +115,82 @@
         android:fontFamily="@font/pretendard_medium"/>
 </LinearLayout>
 
-<!-- 🔹 프로젝트 버튼들만 스크롤 -->
-<ScrollView
-    android:id="@+id/project_scroll"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:layout_marginTop="16dp"
-    android:layout_marginBottom="16dp"
-    app:layout_constraintTop_toBottomOf="@id/all_projects_title"
-    app:layout_constraintStart_toStartOf="@id/guideline_start"
-    app:layout_constraintEnd_toEndOf="@id/guideline_end"
-    app:layout_constraintBottom_toBottomOf="parent">
+    <!-- 🔹 프로젝트 버튼들만 스크롤 -->
+    <ScrollView
+        android:id="@+id/project_scroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintTop_toBottomOf="@id/all_projects_title"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <LinearLayout
-        android:id="@+id/project_list_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        andoird:clipChildren="false">
-
-        <!-- 여기에 동적으로 프로젝트 버튼이 추가됨 -->
-
-        <Button
-            android:id="@+id/project1"
+        <LinearLayout
+            android:id="@+id/project_list_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/Widget.PlanIt.Button"
-            android:layout_gravity="center"
-            android:text="프로젝트 1"
-            android:textColor="@color/gray"
-            android:textSize="15sp"
-            android:background="@drawable/bg_project_button"
-            android:fontFamily="@font/pretendard_semibold"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
-            android:layout_marginHorizontal="50dp" />
+            android:orientation="vertical"
+            andoird:clipChildren="false">
 
-        <Button
-            android:id="@+id/project2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.PlanIt.Button"
-            android:layout_gravity="center"
-            android:text="프로젝트 2"
-            android:textColor="@color/gray"
-            android:textSize="15sp"
-            android:background="@drawable/bg_project_button"
-            android:fontFamily="@font/pretendard_semibold"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
-            android:layout_marginHorizontal="50dp" />
+            <!-- 프로젝트 리스트 (RecyclerView) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/project_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:paddingHorizontal="8dp" />
+            <!--        <Button-->
+            <!--            android:id="@+id/project1"-->
+            <!--            android:layout_width="match_parent"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            style="@style/Widget.PlanIt.Button"-->
+            <!--            android:layout_gravity="center"-->
+            <!--            android:text="프로젝트 1"-->
+            <!--            android:textColor="@color/gray"-->
+            <!--            android:textSize="15sp"-->
+            <!--            android:background="@drawable/bg_project_button"-->
+            <!--            android:fontFamily="@font/pretendard_semibold"-->
+            <!--            android:layout_marginTop="12dp"-->
+            <!--            android:layout_marginBottom="12dp"-->
+            <!--            android:layout_marginHorizontal="50dp" />-->
 
-        <Button
-            android:id="@+id/btn_add_project"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Widget.PlanIt.Button"
-            android:layout_gravity="center"
-            android:text="+ 새 프로젝트 생성"
-            android:textColor="@android:color/white"
-            android:background="@drawable/bg_button"
-            android:backgroundTint="@null"
-            android:fontFamily="@font/pretendard_medium"
-            android:textSize="14sp"
-            android:paddingHorizontal="48dp"
-            android:paddingVertical="8dp"
-            android:elevation="6dp"
-            android:layout_marginTop="12dp"/>
+            <!--        <Button-->
+            <!--            android:id="@+id/project2"-->
+            <!--            android:layout_width="match_parent"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            style="@style/Widget.PlanIt.Button"-->
+            <!--            android:layout_gravity="center"-->
+            <!--            android:text="프로젝트 2"-->
+            <!--            android:textColor="@color/gray"-->
+            <!--            android:textSize="15sp"-->
+            <!--            android:background="@drawable/bg_project_button"-->
+            <!--            android:fontFamily="@font/pretendard_semibold"-->
+            <!--            android:layout_marginTop="12dp"-->
+            <!--            android:layout_marginBottom="12dp"-->
+            <!--            android:layout_marginHorizontal="50dp" />-->
+
+            <Button
+                android:id="@+id/btn_add_project"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.PlanIt.Button"
+                android:layout_gravity="center"
+                android:text="+ 새 프로젝트 생성"
+                android:textColor="@android:color/white"
+                android:background="@drawable/bg_button"
+                android:backgroundTint="@null"
+                android:fontFamily="@font/pretendard_medium"
+                android:textSize="14sp"
+                android:paddingHorizontal="48dp"
+                android:paddingVertical="8dp"
+                android:elevation="6dp"
+                android:layout_marginTop="12dp"/>
 
 
-    </LinearLayout>
-</ScrollView>
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

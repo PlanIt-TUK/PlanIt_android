@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.libs
 import java.util.Properties
 import java.io.FileInputStream
 
