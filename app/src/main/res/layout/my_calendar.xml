@@ -104,22 +104,22 @@
     </LinearLayout>
 
 
-    <Button
-        android:id="@+id/btnAddTask"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/Widget.PlanIt.Button"
-        android:text="+ 새 할 일 추가"
-        android:textColor="@android:color/white"
-        android:background="@drawable/bg_button"
-        android:backgroundTint="@null"
-        android:fontFamily="@font/pretendard_medium"
-        android:textSize="14sp"
-        android:paddingHorizontal="48dp"
-        android:paddingVertical="8dp"
-        android:layout_marginTop="24dp"
-        android:elevation="6dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="50dp"/>
+<!--    <Button-->
+<!--        android:id="@+id/btnAddTask"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        style="@style/Widget.PlanIt.Button"-->
+<!--        android:text="+ 새 할 일 추가"-->
+<!--        android:textColor="@android:color/white"-->
+<!--        android:background="@drawable/bg_button"-->
+<!--        android:backgroundTint="@null"-->
+<!--        android:fontFamily="@font/pretendard_medium"-->
+<!--        android:textSize="14sp"-->
+<!--        android:paddingHorizontal="48dp"-->
+<!--        android:paddingVertical="8dp"-->
+<!--        android:layout_marginTop="24dp"-->
+<!--        android:elevation="6dp"-->
+<!--        android:layout_gravity="center_horizontal"-->
+<!--        android:layout_marginBottom="50dp"/>-->
 
 </LinearLayout>

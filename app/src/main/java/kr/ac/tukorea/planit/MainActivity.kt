@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var projectListContainer: LinearLayout
     private lateinit var project1: Button
     private lateinit var project2: Button
-    private lateinit var binding2: CalendarMainViewBinding
+    //private lateinit var binding2: CalendarMainViewBinding
 
     private val addTaskLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        binding2 = CalendarMainViewBinding.inflate(layoutInflater)
+        //binding2 = CalendarMainViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
 //            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -128,7 +128,8 @@ class MainActivity : AppCompatActivity() {
 
         setupCalendar()
         setupRecyclerView()
-        binding2.myCalendar.selectToday()
+        //binding2.myCalendar.selectToday()
+        binding.mainView.myCalendar.selectToday()
         // onCreate 내부, btnAddTask 클릭 리스너를 교체
 //        binding.mainView.btnAddTask.setOnClickListener {
 //            // AddTaskActivity로 이동
@@ -171,9 +172,10 @@ class MainActivity : AppCompatActivity() {
         // 샘플 데이터 로드
         //실제 백엔드와 연동시 주석처리해주시면 됩니다.
         loadSampleTasks()
-        binding2.myCalendar.selectToday()
+        //두번출현함
+        //binding2.myCalendar.selectToday()
 
-        binding2.myCalendar.setOnClickListener {
+        binding.mainView.myCalendar.setOnClickListener {
             val intent = Intent(this,
                 AddTaskActivity::class.java)
             addTaskLauncher.launch(intent)
@@ -336,7 +338,7 @@ class MainActivity : AppCompatActivity() {
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupCalendar() {
-        with(binding2) {
+        with(binding.mainView) {
             myCalendar.setOnDateSelectedListener { selectedDate ->
                 Log.d("MainActivity", "선택된 날짜: $selectedDate")
                 val inputFormatter = DateTimeFormatter.ofPattern("yyyy.M.d")
