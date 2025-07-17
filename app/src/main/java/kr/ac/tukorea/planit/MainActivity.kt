@@ -35,6 +35,10 @@ import okhttp3.Call
 import okhttp3.Response
 import org.json.JSONObject
 import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URL
+import org.json.JSONArray
+
 
 // 1. 태스크 데이터 클래스
 data class Task(
@@ -57,6 +61,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var taskAdapter: TaskAdapter
     private lateinit var sampleTasks: List<Task>
+    private val dtFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +71,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("TeamMainActivity", "User Email: $currentUserEmail")
 
         enableEdgeToEdge()
+
 
         binding = CalendarMainViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -90,9 +97,9 @@ class MainActivity : AppCompatActivity() {
         val newTask = Task(
             id = System.currentTimeMillis().toInt(),
             teamName = "project a",
-            taskName = "새 일정 제목",
-            taskStart = "2025-07-10 10:00:00",
-            taskEnd = "2025-07-20 22:00:00",
+            taskName = "하이요",
+            taskStart = "2025-07-16 10:00:00",
+            taskEnd = "2025-07-16 22:00:00",
             taskState = false,
             taskTarget = "프로젝트 X",
             userEmail = "who1061@naver.com"
@@ -149,83 +156,109 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupCalendar() {
         with(binding) {
-            myCalendar.setOnDateSelectedListener { selectedDate ->
-                Log.d("MainActivity", "선택된 날짜: $selectedDate")
-                val inputFormatter = DateTimeFormatter.ofPattern("yyyy.M.d")
-                val parsedDate = LocalDate.parse(selectedDate, inputFormatter)
-                val isoString = parsedDate.atStartOfDay().toString()
+            myCalendar.setOnDateSelectedListener { selectedDateString ->
+                // 선택 날짜 LocalDate & ISO-8601 문자열(요청용) 만들기
+                val selectedLocalDate =
+                    LocalDate.parse(selectedDateString, DateTimeFormatter.ofPattern("yyyy.M.d"))
+                val isoString =
+                    selectedLocalDate.atStartOfDay().toString()          // "2025-07-17T00:00:00"
 
-                // 1) 서버로 보낼 JSON
+                // ── ❶ 서버에 현재 유저의 ‘모든’ 일정 요청 (날짜 조건 X) ──
                 val json = """
-                    {
-                      "user_email": "$currentUserEmail",
-                      "task_start": "$isoString"
+        {
+          "user_email": "$currentUserEmail"
+        }
+    """.trimIndent()
+
+                Thread {
+                    // 1. HTTP 연결 ────────────────────────────────────────
+                    val url = URL("http://56.155.134.194:8000/load_task")
+                    val connection = (url.openConnection() as HttpURLConnection).apply {
+                        requestMethod = "POST"
+                        setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                        doOutput = true
                     }
-                """.trimIndent()
 
-                // 2) OkHttp 요청 준비
-                val client = OkHttpClient()
-                val mediaType = "application/json; charset=utf-8".toMediaType()
-                val requestBody = json.toRequestBody(mediaType)
+                    // 2. 요청 바디 작성
+                    val jsonInput = JSONObject().apply {
+                        put("user_email", currentUserEmail)          // ✱ 필수
+                        // ↓ 필요하다면 추가 조건
+                        put("team_name",  "project a")
+                        put("task_target","프로젝트 X")
+                        put("task_state", false)
+                    }
+                    connection.outputStream.use { it.write(jsonInput.toString().toByteArray()) }
 
-                val request = Request.Builder()
-                    .url("http://56.155.134.194:8000/load_task") // ✅ 실제 서버 주소로 교체
-                    .post(requestBody)
-                    .build()
+                    // 3. 응답(문자열) & 원본 로그
+                    val responseStr = connection.inputStream.bufferedReader().use { it.readText() }
+                    Log.d("DBG", "RAW = $responseStr")
 
-
-                // 3) 비동기 요청
-                client.newCall(request).enqueue(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        Log.e("MainActivity", "태스크 로드 실패", e)
-                        runOnUiThread {
-                            Toast.makeText(this@MainActivity, "서버 연결 실패", Toast.LENGTH_SHORT).show()
-                            taskAdapter.updateData(emptyList())
+                    
+                    // 4. JSON 파싱 → List<Task>
+                    val rootObj   = JSONObject(responseStr)
+                    val jsonArr   = rootObj.getJSONArray("task")        // 서버가 'task' 배열 반환
+                    val allTasks: List<Task> = List(jsonArr.length()) { i ->
+                        jsonArr.getJSONObject(i).run {
+                            Task(
+                                id         = optInt("id"),
+                                teamName   = optString("team_name"),
+                                taskName   = optString("task_name"),
+                                taskStart  = optString("task_start"),
+                                taskEnd    = optString("task_end"),
+                                taskState  = optBoolean("task_state"),
+                                taskTarget = optString("task_target"),
+                                userEmail  = optString("user_email")
+                            ).also { Log.d("Tasks", "▶ $it") }
                         }
                     }
 
-                    override fun onResponse(call: Call, response: Response) {
-                        if (response.isSuccessful) {
-                            response.body?.let { responseBody ->
-                                val responseString = responseBody.string()
-                                Log.d("load_task", "서버 응답 Raw: $responseString") // 🔥 여기서 응답 전문 출력
-                                val tasks = parseTasks(responseString) // ✅ 아래 함수 참고
-                                Log.d("MainActivity", "$tasks")
-                                runOnUiThread {
-                                    taskAdapter.updateData(tasks)
-                                }
-                            }
-                        } else {
-                            Log.e("MainActivity", "서버 응답 오류: ${response.code}")
-                            runOnUiThread {
-                                taskAdapter.updateData(emptyList())
-                            }
-                        }
+                    // 5. 날짜·이메일 필터
+                    val filtered = allTasks.filter { t ->
+                        try {
+                            val start = LocalDateTime.parse(t.taskStart, dtFormatter).toLocalDate()
+                            val end   = LocalDateTime.parse(t.taskEnd,   dtFormatter).toLocalDate()
+                            !selectedLocalDate.isBefore(start) &&        // start ≤ 선택일
+                                    !selectedLocalDate.isAfter(end)   &&         // 선택일 ≤ end
+                                    t.userEmail == currentUserEmail
+                        } catch (e: Exception) { false }
                     }
-                })
+                    Log.d("DBG", "filtered = ${filtered.size}")
+
+                    // 6. 리사이클러뷰 갱신 (메인 스레드)
+                    runOnUiThread { taskAdapter.updateData(filtered) }
+                }.start()
             }
         }
     }
-    private fun parseTasks(json: String): List<Task> {
-        val jsonObj = JSONObject(json)
-        val jsonArray = jsonObj.getJSONArray("task")
-        val tasks = mutableListOf<Task>()
-        for (i in 0 until jsonArray.length()) {
-            val item = jsonArray.getJSONObject(i)
-            val task = Task(
-                id = item.optInt("id"),
-                teamName = item.optString("team_name"),
-                taskName = item.optString("task_name"),
-                taskStart = item.optString("task_start"),
-                taskEnd = item.optString("task_end"),
-                taskState = item.optBoolean("task_state"),
-                taskTarget = item.optString("task_target"),
-                userEmail = item.optString("user_email")
-            )
-            tasks.add(task)
-        }
-        return tasks
-    }
+//    private fun parseTasks(json: String): List<Task> {
+//        val rootObj   = JSONObject(json)
+//
+//        // ① output_ai가 JSONArray 직접 담는 방식
+//        val jsonArray = rootObj.getJSONArray("output_ai")
+//
+//        /* ── 혹시 output_ai가 문자열로 들어온다면: ──
+//           val outputStr = rootObj.getString("output_ai")
+//           val jsonArray = JSONArray(outputStr)
+//        */
+//
+//        val tasks = mutableListOf<Task>()
+//        for (i in 0 until jsonArray.length()) {
+//            val item = jsonArray.getJSONObject(i)
+//            tasks.add(
+//                Task(
+//                    id         = item.optInt("id"),
+//                    teamName   = item.optString("team_name"),
+//                    taskName   = item.optString("task_name"),
+//                    taskStart  = item.optString("task_start"),
+//                    taskEnd    = item.optString("task_end"),
+//                    taskState  = item.optBoolean("task_state"),
+//                    taskTarget = item.optString("task_target"),
+//                    userEmail  = item.optString("user_email")
+//                )
+//            )
+//        }
+//        return tasks
+//    }
 
     private fun setupRecyclerView() {
         // RecyclerView 참조 획득
@@ -310,11 +343,11 @@ class MainActivity : AppCompatActivity() {
      * @param isChecked 새로운 체크 상태
      */
     private fun handleCheckboxClick(task: Task, isChecked: Boolean) {
-        // 데이터베이스나 서버에 완료 상태 업데이트
+        // ▼ (3) 토글된 상태를 그대로 전달 (기존 코드와 동일, 위치만 확인)
         updateTaskCompletionStatus(task, isChecked)
 
-        // 완료/미완료 상태에 따른 메시지 표시
-        val message = if (isChecked) "태스크 완료: ${task.taskName}" else "태스크 미완료: ${task.taskName}"
+        val message = if (isChecked) "태스크 완료: ${task.taskName}"
+        else            "태스크 미완료: ${task.taskName}"
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
@@ -323,31 +356,29 @@ class MainActivity : AppCompatActivity() {
      * @param taskId 업데이트할 태스크 ID
      * @param isCompleted 새로운 완료 상태
      */
-    private fun updateTaskCompletionStatus(task: Task, isCompleted: Boolean) {
+    private fun updateTaskCompletionStatus(task: Task, newState: Boolean) {   // ⬅︎ 파라미터명만 읽기 편하게
         val client = OkHttpClient()
 
-        val json = """
+        // ---------- JSON Body ----------
+        val jsonBody = """
         {
           "team_name": "${task.teamName}",
           "task_name": "${task.taskName}",
-          "task_state": ${isCompleted}
+          "task_state": $newState            // ⬅︎ true / false 토글 값
         }
     """.trimIndent()
 
-        val requestBody = json.toRequestBody("application/json; charset=utf-8".toMediaType())
-
         val request = Request.Builder()
-            .url("http://56.155.134.194:8000/update_task") // 실제 서버 주소
-            .post(requestBody)
+            .url("http://56.155.134.194:8000/update_task")   // 서버 스펙 동일
+            .post(jsonBody.toRequestBody("application/json; charset=utf-8".toMediaType()))
             .build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Log.e("MainActivity", "업데이트 실패", e)
+                Log.e("MainActivity", "[update] 실패", e)     // ⬅︎ 실패 로그
             }
-
             override fun onResponse(call: Call, response: Response) {
-                Log.d("MainActivity", "업데이트 응답: ${response.code}")
+                Log.d("MainActivity", "[update] 응답: ${'$'}{response.code}")  // ⬅︎ 응답 코드 확인
             }
         })
     }
@@ -407,7 +438,7 @@ class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         taskCheckBox.setOnCheckedChangeListener(null)
 
         // 데이터를 각 뷰에 설정
-        val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val inputFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
         val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         val dateFormatter = DateTimeFormatter.ofPattern("MM.dd")
 
@@ -503,11 +534,13 @@ class TaskAdapter(
      */
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = taskList[position]
+
         holder.bind(task, onItemClick) { clickedTask, isChecked ->
-            // 실제 데이터 업데이트
+            // ▼ (1) 여기 유지 -------------------------------
             updateTaskCompletion(clickedTask.id, isChecked)
-            // 콜백 호출
-            onCheckboxClick(clickedTask, isChecked)
+
+            // ▼ (2) 이미 토글된 값(isChecked)을 그대로 넘긴다
+            onCheckboxClick(clickedTask, isChecked)   // ⬅︎ 수정 없음, 그냥 확인만
         }
     }
 
@@ -522,21 +555,42 @@ class TaskAdapter(
      */
     fun updateData(newList: List<Task>) {
         taskList.clear()
+        Log.d("DBG", "updateData in, list = ${newList.size}")
 
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val fmt = DateTimeFormatter.ISO_LOCAL_DATE_TIME   // "2025-07-10T10:00:00"
 
-        // 정렬: 완료 여부 → 마감일 빠른 순
-        val sortedList = newList.sortedWith(compareBy<Task> { it.taskState }  // false(미완료) → true(완료)
-            .thenBy {
-                try {
-                    LocalDateTime.parse(it.taskEnd, formatter)
-                } catch (e: Exception) {
-                    LocalDateTime.MAX // 파싱 실패 시 가장 뒤로
-                }
+        val sorted = newList.sortedWith { a, b ->
+            // 1) 완료 여부
+            if (a.taskState != b.taskState) {
+                return@sortedWith if (a.taskState) 1 else -1   // false 먼저
             }
-        )
 
-        taskList.addAll(sortedList)
+            // 2) 같은 완료 그룹 안에서 날짜 타입 비교
+            fun isSameDay(t: Task): Boolean {
+                val s = LocalDateTime.parse(t.taskStart, fmt).toLocalDate()
+                val e = LocalDateTime.parse(t.taskEnd,   fmt).toLocalDate()
+                return s == e
+            }
+            val aSame = isSameDay(a)
+            val bSame = isSameDay(b)
+            if (aSame != bSame) {
+                return@sortedWith if (aSame) -1 else 1          // 당일-일정 먼저
+            }
+
+            // 3) 같은 타입 → 세부 시간 비교
+            val aStart = LocalDateTime.parse(a.taskStart, fmt)
+            val bStart = LocalDateTime.parse(b.taskStart, fmt)
+            val aEnd   = LocalDateTime.parse(a.taskEnd,   fmt)
+            val bEnd   = LocalDateTime.parse(b.taskEnd,   fmt)
+
+            return@sortedWith if (aSame) {
+                aStart.compareTo(bStart)        // 당일-일정 : 시작시간
+            } else {
+                aEnd.compareTo(bEnd)            // 며칠-짜리 : 마감시간
+            }
+        }
+
+        taskList.addAll(sorted)
         notifyDataSetChanged()
     }
 
