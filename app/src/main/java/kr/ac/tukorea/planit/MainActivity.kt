@@ -168,7 +168,7 @@ class MainActivity : AppCompatActivity() {
     private fun updateMainContent(projectName: String) {
         // 메인 콘텐츠 영역 업데이트
         val mainContent = findViewById<LinearLayout>(R.id.main_view)
-        // TODO: 특정 프로젝트 메인 페이지로 이동 
+        // TODO: 특정 프로젝트 메인 페이지로 이동??
 
         // 예시: 액션바 타이틀 변경
         supportActionBar?.title = projectName
@@ -178,8 +178,7 @@ class MainActivity : AppCompatActivity() {
         // 새 프로젝트 추가 다이얼로그 표시
         Toast.makeText(this, "새 프로젝트 추가 기능", Toast.LENGTH_SHORT).show()
 
-        // 실제 구현에서는 다이얼로그를 표시하거나 새 액티비티로 이동
-        // 예시: AlertDialog 또는 새 액티비티 시작
+        // TODO: 새 프로젝트 추가
 
         drawerLayout.closeDrawer(GravityCompat.START)
     }
