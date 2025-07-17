@@ -112,6 +112,14 @@
               android:hint="이메일을 입력하세요"
               android:padding="12dp"
               android:textSize="16sp"/>
+
+          <Button
+              android:id="@+id/btnInvite"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="초대"
+              android:layout_marginTop="8dp"
+              android:layout_gravity="end" />
         </LinearLayout>
       </androidx.cardview.widget.CardView>
 
@@ -142,6 +150,14 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content" />
 
+          <!-- 팀원 목록을 담을 LinearLayout -->
+          <LinearLayout
+              android:id="@+id/layoutMemberList"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:padding="8dp" />
+
           <!-- 구성원 리스트 예시 -->
           <LinearLayout
               android:id="@+id/memberList"
@@ -152,7 +168,6 @@
 
             <!-- 구성원 1 (팀장) -->
             <LinearLayout
-                android:id=""
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"

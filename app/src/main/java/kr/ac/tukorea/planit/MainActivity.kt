@@ -1,5 +1,6 @@
 package kr.ac.tukorea.planit
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,5 +17,12 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // 🔹 테스트용: 앱 실행 시 ProjectManagerActivity로 이동
+        val intent = Intent(this, ProjectManagerActivity::class.java).apply {
+            putExtra("userEmail", "hong@example.com")
+            putExtra("projectId", "12345")
+        }
+        startActivity(intent)
     }
 }
