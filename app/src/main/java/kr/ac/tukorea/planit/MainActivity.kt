@@ -7,19 +7,27 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.CheckBox
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kr.ac.tukorea.planit.databinding.ActivityMainBinding
 import kr.ac.tukorea.planit.databinding.CalendarMainViewBinding
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -44,7 +52,7 @@ data class Task(
 class MainActivity : AppCompatActivity() {
 
     private val TAG = this::class.simpleName
-    private lateinit var binding: CalendarMainViewBinding
+    private lateinit var binding: ActivityMainBinding
     // RecyclerView와 Adapter 변수 선언
     private lateinit var recyclerView: RecyclerView
     private lateinit var taskAdapter: TaskAdapter
@@ -59,22 +67,53 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    //navigation
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var drawerToggle: ActionBarDrawerToggle
+    private lateinit var navDrawer: View
+    // 드로어 내 뷰들
+    private lateinit var currentProjectName: TextView
+    private lateinit var projectListContainer: LinearLayout
+    private lateinit var project1: Button
+    private lateinit var project2: Button
+    private lateinit var btnAddProject: Button
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        binding = CalendarMainViewBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+//            insets
+//        }
+        binding.mainView.btnAddTask.setOnClickListener{
+            // TODO: 할 일 추가 ui 접목하여 유저 입력 받아오기
+            addNewTask(title="새 할일","12:30","프로젝트3")
+            Toast.makeText(this,"할 일 생성: 새 할일", Toast.LENGTH_SHORT).show()
+            // TODO: 백엔드 연결 -> 할 일 서버에 저장(아님말고)
         }
-
+        findViewById<ImageView>(R.id.icon_hamberger).setOnClickListener{
+            // TODO: 네비게이션 바 펼치기
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                // 열려있다면 닫기
+                drawerLayout.closeDrawer(GravityCompat.START)
+            } else {
+                // 닫혀있다면 열기
+                drawerLayout.openDrawer(GravityCompat.START)
+            }
+        }
         setupCalendar()
         // RecyclerView 초기화 및 설정
         setupRecyclerView()
+
+        //네비게이션뷰
+        setupDrawer()
+        setupDrawerViews()
+        setupButtonListeners()
 
         // 샘플 데이터 로드
         //실제 백엔드와 연동시 주석처리해주시면 됩니다.
@@ -87,14 +126,147 @@ class MainActivity : AppCompatActivity() {
             addTaskLauncher.launch(intent)
         }
     }
+    private fun setupDrawer() {
+        drawerLayout = findViewById(R.id.drawer_layout)
+            ?: throw IllegalStateException("DrawerLayout not found")
+        navDrawer = findViewById(R.id.nav_drawer)
+            ?: throw IllegalStateException("Navigation drawer not found")
 
+//        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+//        setSupportActionBar(toolbar)
+
+        // 드로어 토글 설정
+        drawerToggle = ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+//            toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        drawerLayout.addDrawerListener(drawerToggle)
+        drawerToggle.syncState()
+
+        // 액션바에 햄버거 버튼 표시
+//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+//        supportActionBar?.setHomeButtonEnabled(true)
+    }
+
+    private fun setupDrawerViews() {
+        // 드로어 내 뷰들 참조
+        currentProjectName = navDrawer.findViewById(R.id.current_project_name)
+        projectListContainer = navDrawer.findViewById(R.id.project_list_container)
+        project1 = navDrawer.findViewById(R.id.project1)
+        project2 = navDrawer.findViewById(R.id.project2)
+        btnAddProject = navDrawer.findViewById(R.id.btn_add_project)
+    }
+
+    private fun setupButtonListeners() {
+        // 프로젝트 1 버튼 클릭 리스너
+        project1.setOnClickListener {
+            selectProject("프로젝트 1")
+        }
+
+        // 프로젝트 2 버튼 클릭 리스너
+        project2.setOnClickListener {
+            selectProject("프로젝트 2")
+        }
+
+        // 새 할 일 추가 버튼 클릭 리스너
+        btnAddProject.setOnClickListener {
+            showAddProjectDialog()
+        }
+    }
+
+    private fun selectProject(projectName: String) {
+        // 현재 프로젝트명 업데이트
+        currentProjectName.text = projectName
+
+        // 선택된 프로젝트에 따른 처리
+        Toast.makeText(this, "$projectName 선택됨", Toast.LENGTH_SHORT).show()
+
+        // 여기에 프로젝트 변경에 따른 메인 콘텐츠 업데이트 로직 추가
+        updateMainContent(projectName)
+
+        // 드로어 닫기
+        drawerLayout.closeDrawer(GravityCompat.START)
+    }
+
+    private fun updateMainContent(projectName: String) {
+        // 메인 콘텐츠 영역 업데이트
+        val mainContent = findViewById<LinearLayout>(R.id.main_view)
+        // TODO: 특정 프로젝트 메인 페이지로 이동??
+
+        // 예시: 액션바 타이틀 변경
+        supportActionBar?.title = projectName
+    }
+
+    private fun showAddProjectDialog() {
+        // 새 프로젝트 추가 다이얼로그 표시
+        Toast.makeText(this, "새 프로젝트 추가 기능", Toast.LENGTH_SHORT).show()
+
+        // TODO: 새 프로젝트 추가
+
+        drawerLayout.closeDrawer(GravityCompat.START)
+    }
+
+    // 동적으로 프로젝트 버튼 추가하는 함수
+    fun addProjectButton(projectName: String) {
+        val button = Button(this)
+        button.text = projectName
+        button.setTextColor(resources.getColor(R.color.gray, null))
+        button.textSize = 15f
+        button.background = resources.getDrawable(R.drawable.bg_project_button, null)
+        button.typeface = resources.getFont(R.font.pretendard_semibold)
+
+        // 마진 설정
+        val layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        layoutParams.setMargins(
+            resources.getDimensionPixelSize(R.dimen.dp_50),
+            resources.getDimensionPixelSize(R.dimen.dp_12),
+            resources.getDimensionPixelSize(R.dimen.dp_50),
+            resources.getDimensionPixelSize(R.dimen.dp_12)
+        )
+        button.layoutParams = layoutParams
+
+        // 클릭 리스너 설정
+        button.setOnClickListener {
+            selectProject(projectName)
+        }
+
+        // 새 할 일 추가 버튼 앞에 추가
+        val addButtonIndex = projectListContainer.indexOfChild(btnAddProject)
+        projectListContainer.addView(button, addButtonIndex)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return if (drawerToggle.onOptionsItemSelected(item)) {
+            true
+        } else super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        drawerToggle.syncState()
+    }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupCalendar() {
         // 캘린더에서 날짜가 선택될 때 호출되는 리스너 설정
-        with(binding) {
+        with(binding.mainView) {
             myCalendar.setOnDateSelectedListener { selectedDate ->
                 // 선택된 날짜 표시
-                tvSelectedDate.text = "선택된 날짜: $selectedDate"
+                //tvSelectedDate.text = "선택된 날짜: $selectedDate"
+
                 // 선택된 날짜에 따른 추가 작업
                 // TODO: 선택된 날짜별 할 일 불러오기
                 // 날짜에 해당하는 태스크만 필터링
@@ -176,7 +348,7 @@ class MainActivity : AppCompatActivity() {
                 parent: RecyclerView,
                 state: RecyclerView.State
             ) {
-                outRect.bottom = 16 // 아이템 간 16dp 간격
+                outRect.bottom = 32 // 아이템 간 16dp 간격
             }
         }
         recyclerView.addItemDecoration(itemDecoration)
@@ -355,16 +527,16 @@ class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private fun updateUIForCompletionState(isCompleted: Boolean) {
         if (isCompleted) {
             // 완료된 태스크: 텍스트 색상 변경 및 취소선 추가
-            taskTitle.setTextColor(ContextCompat.getColor(itemView.context, R.color.todo_complete))
+            //taskTitle.setTextColor(ContextCompat.getColor(itemView.context, R.color.todo_complete))
             taskTitle.paintFlags = taskTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            taskProject.setTextColor(ContextCompat.getColor(itemView.context, R.color.todo_complete))
-            taskTime.setTextColor(ContextCompat.getColor(itemView.context, R.color.todo_complete))
+            //taskProject.setTextColor(ContextCompat.getColor(itemView.context, R.color.todo_complete))
+            //taskTime.setTextColor(ContextCompat.getColor(itemView.context, R.color.todo_complete))
         } else {
             // 미완료된 태스크: 원래 색상으로 복원
-            taskTitle.setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
+            //taskTitle.setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
             taskTitle.paintFlags = taskTitle.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-            taskProject.setTextColor(Color.parseColor("#9A9A9A"))
-            taskTime.setTextColor(ContextCompat.getColor(itemView.context, R.color.gray))
+            //taskProject.setTextColor(Color.parseColor("#9A9A9A"))
+            //taskTime.setTextColor(ContextCompat.getColor(itemView.context, R.color.gray))
         }
     }
 }

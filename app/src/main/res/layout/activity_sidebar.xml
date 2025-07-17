@@ -172,7 +172,7 @@
             android:layout_height="wrap_content"
             style="@style/Widget.PlanIt.Button"
             android:layout_gravity="center"
-            android:text="+ 새 할 일 추가"
+            android:text="+ 새 프로젝트 생성"
             android:textColor="@android:color/white"
             android:background="@drawable/bg_button"
             android:backgroundTint="@null"
