@@ -336,61 +336,41 @@ class MainActivity : AppCompatActivity() {
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupCalendar() {
+        // 캘린더에서 날짜가 선택될 때 호출되는 리스너 설정
         with(binding2) {
             myCalendar.setOnDateSelectedListener { selectedDate ->
-                Log.d("MainActivity", "선택된 날짜: $selectedDate")
-                val inputFormatter = DateTimeFormatter.ofPattern("yyyy.M.d")
-                val parsedDate = LocalDate.parse(selectedDate, inputFormatter)
-                val isoString = parsedDate.atStartOfDay().toString()
+                // 선택된 날짜 표시
+                //tvSelectedDate.text = "선택된 날짜: $selectedDate"
+                // 선택된 날짜에 따른 추가 작업
+                // TODO: 선택된 날짜별 할 일 불러오기
+                // 날짜에 해당하는 태스크만 필터링
 
-                // 1) 서버로 보낼 JSON
-                val json = """
-                    {
-                      "user_email": "$currentUserEmail",
-                      "task_start": "$isoString"
-                    }
-                """.trimIndent()
+                try {
+                    val formatterInput = DateTimeFormatter.ofPattern("yyyy.M.d")
+                    val formatterOutput = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-                // 2) OkHttp 요청 준비
-                val client = OkHttpClient()
-                val mediaType = "application/json; charset=utf-8".toMediaType()
-                val requestBody = json.toRequestBody(mediaType)
+                    val selectedLocalDate = LocalDate.parse(selectedDate, formatterInput)
+                    val selectedDateStr = selectedLocalDate.format(formatterOutput)
 
-                val request = Request.Builder()
-                    .url("http://56.155.134.194:8000/load_task") // ✅ 실제 서버 주소로 교체
-                    .post(requestBody)
-                    .build()
+                    Log.d("Debug", "selectedDateStr (포맷 후): $selectedDateStr")
 
-
-                // 3) 비동기 요청
-                client.newCall(request).enqueue(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        Log.e("MainActivity", "태스크 로드 실패", e)
-                        runOnUiThread {
-                            Toast.makeText(this@MainActivity, "서버 연결 실패", Toast.LENGTH_SHORT).show()
-                            taskAdapter.updateData(emptyList())
-                        }
+                    val filteredTasks = sampleTasks.filter { task ->
+                        task.time.startsWith(selectedDateStr)
                     }
 
-                    override fun onResponse(call: Call, response: Response) {
-                        if (response.isSuccessful) {
-                            response.body?.let { responseBody ->
-                                val responseString = responseBody.string()
-                                Log.d("load_task", "서버 응답 Raw: $responseString") // 🔥 여기서 응답 전문 출력
-                                val tasks = parseTasks(responseString) // ✅ 아래 함수 참고
-                                Log.d("MainActivity", "$tasks")
-                                runOnUiThread {
-                                    taskAdapter.updateData(tasks)
-                                }
-                            }
-                        } else {
-                            Log.e("MainActivity", "서버 응답 오류: ${response.code}")
-                            runOnUiThread {
-                                taskAdapter.updateData(emptyList())
-                            }
-                        }
+                    Log.d("MainActivity", "Filtered tasks count: ${filteredTasks.size}")
+                    filteredTasks.forEach { task ->
+                        Log.d("MainActivity", "Task: id=${task.id}, time=${task.time}, title=${task.title}")
                     }
-                })
+
+                    taskAdapter.updateData(filteredTasks)
+
+                } catch (e: Exception) {
+                    Log.e("MainActivity", "날짜 파싱 오류", e)
+                    // 예외 발생시 전체 태스크를 보여주거나 빈 리스트로 처리 가능
+                    taskAdapter.updateData(emptyList())
+                }
+
             }
         }
     }
@@ -656,7 +636,7 @@ class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         taskCheckBox.setOnCheckedChangeListener(null)
 
         // 데이터를 각 뷰에 설정
-        val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-ddTHH:mm:ss")
         val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         val dateFormatter = DateTimeFormatter.ofPattern("MM.dd")
 
