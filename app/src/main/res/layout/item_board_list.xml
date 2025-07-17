@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="16dp">
+
+    <!-- (선택) 색상 점 -->
+    <View
+        android:id="@+id/colorDot"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/color_circle_small"/>
+    <!-- 필요없으면 삭제해도 됩니다 -->
+
+    <!-- 보드 이름 -->
+    <TextView
+        android:id="@+id/tvBoardName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="보드 이름"
+        android:textSize="16sp"
+        android:textColor="@color/black"/>
+</LinearLayout>

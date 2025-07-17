@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_margin="16dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="8dp"
@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/white"
         android:layout_marginTop="20dp">
 
@@ -69,7 +69,7 @@
         <!-- 🔹 ScrollView -->
         <ScrollView
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:fillViewport="true"
             android:layout_marginTop="20dp"
             android:scrollbars="none"

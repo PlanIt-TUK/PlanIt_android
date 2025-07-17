@@ -102,6 +102,7 @@ class LoginActivity : AppCompatActivity() {
                     override fun onResponse(call: Call, response: Response) {
                         Log.d("LoginActivity", "백엔드 전송 성공: ${response.code}")
                         runOnUiThread {
+                            // ✅ MainActivity → TeamMainActivity 로 전환
                             val intent = Intent(this@LoginActivity, MainActivity::class.java)
                             startActivity(intent)
                             finish()

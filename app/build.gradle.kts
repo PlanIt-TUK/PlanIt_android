@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.volley)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -77,4 +78,7 @@ dependencies {
     // ✅ Kotlin Coroutines
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    implementation ("com.google.android.material:material:1.10.0")
+    implementation ("androidx.fragment:fragment-ktx:1.6.2")
 }

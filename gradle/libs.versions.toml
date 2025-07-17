@@ -12,6 +12,7 @@ constraintlayout = "2.2.1"
 kakao = "2.19.0"
 #캘린더 뷰 라이브러리
 calendar-view="2.6.2"
+volley = "1.2.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -25,6 +26,7 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 kakao-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakao" }
 #캘린더 뷰 라이브러리
 calendar = { module = "com.kizitonwose.calendar:view", version.ref = "calendar-view" }
+volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
