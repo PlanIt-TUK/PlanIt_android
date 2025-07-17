@@ -369,9 +369,8 @@ class MainActivity : AppCompatActivity() {
                     val jsonInput = JSONObject().apply {
                         put("user_email", currentUserEmail)          // ✱ 필수
                         // ↓ 필요하다면 추가 조건
-                        put("team_name",  "project a")
-                        put("task_target","프로젝트 X")
-                        put("task_state", false)
+                        put("team_name",  "")
+                        put("task_target","")
                     }
                     connection.outputStream.use { it.write(jsonInput.toString().toByteArray()) }
 
