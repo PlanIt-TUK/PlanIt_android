@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
@@ -24,9 +25,16 @@ import kr.ac.tukorea.planit.databinding.CalendarMainViewBinding
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.Callback
+import okhttp3.Call
+import okhttp3.Response
+import java.io.IOException
 
 // 1. 태스크 데이터 클래스
-
 data class Task(
     val id: Int,
     val teamName: String,
@@ -39,9 +47,10 @@ data class Task(
 )
 
 class MainActivity : AppCompatActivity() {
-
     private val TAG = this::class.simpleName
     private lateinit var binding: CalendarMainViewBinding
+    // 사용자 이메일 받아오기
+    private val currentUserEmail = intent.getStringExtra("user_email") ?: ""
     // RecyclerView와 Adapter 변수 선언
     private lateinit var recyclerView: RecyclerView
     private lateinit var taskAdapter: TaskAdapter
@@ -59,17 +68,75 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        // 샘플 데이터 로드, 실제 백엔드와 연동시 주석처리해주시면 됩니다.
+        loadSampleTasks()
 
         setupCalendar()
-        // RecyclerView 초기화 및 설정
         setupRecyclerView()
-
-        // 샘플 데이터 로드
-        //실제 백엔드와 연동시 주석처리해주시면 됩니다.
-        loadSampleTasks()
         binding.myCalendar.selectToday()
-    }
 
+        val btnAddTask = findViewById<Button>(R.id.btnAddTask)
+        btnAddTask.setOnClickListener {
+            handleAddTaskClick()  // ← 이 함수 내부에 네 로직 넣으면 됨
+        }
+    }
+    // 새 일정 추가 버튼 클릭 함수
+    private fun handleAddTaskClick() {
+        val newTask = Task(
+            id = System.currentTimeMillis().toInt(),
+            teamName = "Team Example",
+            taskName = "새 일정 제목",
+            taskStart = "2025-07-10 10:00:00",
+            taskEnd = "2025-07-20 22:00:00",
+            taskState = false,
+            taskTarget = "프로젝트 X",
+            userEmail = "user@example.com"
+        )
+        val json = """
+        {
+            "team_name": "${newTask.teamName}",
+            "task_name": "${newTask.taskName}",
+            "task_start": "${newTask.taskStart}",
+            "task_end": "${newTask.taskEnd}",
+            "task_state": ${newTask.taskState},  
+            "task_target": "${newTask.taskTarget}",
+            "user_email": "${newTask.userEmail}"
+        }
+    """.trimIndent()
+
+        val client = OkHttpClient()
+        val mediaType = "application/json; charset=utf-8".toMediaType()
+        val requestBody = json.toRequestBody(mediaType)
+
+        val request = Request.Builder()
+            .url("http://56.155.134.194:8000/add_task") // 실제 서버 URL로 바꿔주세요
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("handleAddTaskClick", "서버 전송 실패", e)
+                runOnUiThread {
+                    Toast.makeText(this@MainActivity, "서버 연결 실패", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    Log.d("handleAddTaskClick", "서버 전송 성공: ${response.code}")
+                    runOnUiThread {
+                        Toast.makeText(this@MainActivity, "일정 추가 성공", Toast.LENGTH_SHORT).show()
+                        // 필요 시 UI 업데이트 로직 추가 (예: 리사이클러뷰 갱신)
+                    }
+                } else {
+                    Log.e("handleAddTaskClick", "서버 응답 오류: ${response.code}")
+                    runOnUiThread {
+                        Toast.makeText(this@MainActivity, "일정 추가 실패", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
+    }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupCalendar() {
         // 캘린더에서 날짜가 선택될 때 호출되는 리스너 설정
@@ -89,7 +156,8 @@ class MainActivity : AppCompatActivity() {
                     Log.d("Debug", "selectedDate: $selectedLocalDate")
 
                     val filteredTasks = sampleTasks.filter { task ->
-                        try {
+                        // 날짜 필터는 기존대로 유지
+                        val dateMatches = try {
                             val hasStart = task.taskStart.isNotBlank()
                             val hasEnd = task.taskEnd.isNotBlank()
 
@@ -110,6 +178,8 @@ class MainActivity : AppCompatActivity() {
                         } catch (e: Exception) {
                             false
                         }
+                        // 여기에 이메일 필터 추가!
+                        dateMatches && (task.userEmail == currentUserEmail)
                     }
 
                     Log.d("MainActivity", "Filtered tasks count: ${filteredTasks.size}")
@@ -123,7 +193,6 @@ class MainActivity : AppCompatActivity() {
                     Log.e("MainActivity", "날짜 파싱 오류", e)
                     taskAdapter.updateData(emptyList())
                 }
-
             }
         }
     }
@@ -139,7 +208,13 @@ class MainActivity : AppCompatActivity() {
                 handleTaskClick(task)
             },
             onCheckboxClick = { task, isChecked ->
-                // 체크박스 클릭 시 실행될 코드
+                // 1) RecyclerView UI 업데이트
+                taskAdapter.updateTaskCompletion(task.id, isChecked)
+
+                // 2) DB 업데이트 함수 호출 (별도로 구현)
+                updateTaskCompletionStatus(task, isChecked)
+
+                // 3) 토스트 등 UI 알림
                 handleCheckboxClick(task, isChecked)
             }
         )
@@ -172,10 +247,10 @@ class MainActivity : AppCompatActivity() {
      */
     private fun loadSampleTasks() {
         sampleTasks = listOf(
-            Task(id = 1, teamName = "Team Alpha", taskName = "기획안 작성", taskStart = "2025-07-15 09:00:00", taskEnd = "2025-07-15 12:00:00", taskState = false, taskTarget = "프로젝트 A", userEmail = "user1@example.com"),
-            Task(id = 2, teamName = "Team Alpha", taskName = "디자인 회의", taskStart = "2025-07-16 14:00:00", taskEnd = "2025-07-16 15:30:00", taskState = false, taskTarget = "프로젝트 A", userEmail = "user2@example.com"),
-            Task(id = 3, teamName = "Team Beta", taskName = "개발 작업", taskStart = "2025-07-16 00:00:00", taskEnd = "2025-07-18 18:00:00", taskState = false, taskTarget = "프로젝트 B", userEmail = "user3@example.com"),
-            Task(id = 4, teamName = "Team Beta", taskName = "기능 테스트", taskStart = "2025-07-16 00:00:00", taskEnd = "2025-07-17 23:59:59", taskState = false, taskTarget = "프로젝트 B", userEmail = "user4@example.com"),
+            Task(id = 1, teamName = "Team Alpha", taskName = "기획안 작성", taskStart = "2025-07-15 09:00:00", taskEnd = "2025-07-15 12:00:00", taskState = false, taskTarget = "프로젝트 A", userEmail = "who1061@naver.com"),
+            Task(id = 2, teamName = "Team Alpha", taskName = "디자인 회의", taskStart = "2025-07-16 14:00:00", taskEnd = "2025-07-16 15:30:00", taskState = false, taskTarget = "프로젝트 A", userEmail = "who1061@naver.com"),
+            Task(id = 3, teamName = "Team Beta", taskName = "개발 작업", taskStart = "2025-07-16 00:00:00", taskEnd = "2025-07-18 18:00:00", taskState = false, taskTarget = "프로젝트 B", userEmail = "who1061@naver.com"),
+            Task(id = 4, teamName = "Team Beta", taskName = "기능 테스트", taskStart = "2025-07-16 00:00:00", taskEnd = "2025-07-17 23:59:59", taskState = false, taskTarget = "프로젝트 B", userEmail = "who1061@naver.com"),
             Task(id = 5, teamName = "Team Gamma", taskName = "마무리 정리", taskStart = "2025-07-17 10:00:00", taskEnd = "2025-07-18 18:00:00", taskState = true, taskTarget = "프로젝트 C", userEmail = "user5@example.com")
         )
         //taskAdapter.updateData(sampleTasks)
@@ -206,7 +281,7 @@ class MainActivity : AppCompatActivity() {
      */
     private fun handleCheckboxClick(task: Task, isChecked: Boolean) {
         // 데이터베이스나 서버에 완료 상태 업데이트
-        updateTaskCompletionStatus(task.id, isChecked)
+        updateTaskCompletionStatus(task, isChecked)
 
         // 완료/미완료 상태에 따른 메시지 표시
         val message = if (isChecked) "태스크 완료: ${task.taskName}" else "태스크 미완료: ${task.taskName}"
@@ -218,17 +293,40 @@ class MainActivity : AppCompatActivity() {
      * @param taskId 업데이트할 태스크 ID
      * @param isCompleted 새로운 완료 상태
      */
-    private fun updateTaskCompletionStatus(taskId: Int, isCompleted: Boolean) {
-        // 실제 구현에서는 데이터베이스나 서버 API 호출
-        // 예: database.updateTaskStatus(taskId, isCompleted)
-        // 또는: apiService.updateTask(taskId, isCompleted)
+    private fun updateTaskCompletionStatus(task: Task, isCompleted: Boolean) {
+        val client = OkHttpClient()
+
+        val json = """
+        {
+          "team_name": "${task.teamName}",
+          "task_name": "${task.taskName}",
+          "task_state": ${isCompleted}
+        }
+    """.trimIndent()
+
+        val requestBody = json.toRequestBody("application/json; charset=utf-8".toMediaType())
+
+        val request = Request.Builder()
+            .url("http://56.155.134.194:8000/update_task") // 실제 서버 주소
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("MainActivity", "업데이트 실패", e)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                Log.d("MainActivity", "업데이트 응답: ${response.code}")
+            }
+        })
     }
 
     /**
      * 새 태스크를 추가하는 메서드
      */
     fun addNewTask(taskName: String, taskStart: String, taskEnd: String, taskTarget: String,
-        teamName: String, taskState: Boolean = false, userEmail: String
+                   teamName: String, taskState: Boolean = false, userEmail: String
     ) {
         val newTask = Task(
             id = System.currentTimeMillis().toInt(),
@@ -327,6 +425,9 @@ class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             if (isChecked != task.taskState) {
                 onCheckboxClick(task, isChecked)
             }
+
+
+
         }
     }
 

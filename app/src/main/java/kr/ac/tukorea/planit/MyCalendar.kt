@@ -251,4 +251,3 @@ class DayViewContainer(view: View) : ViewContainer(view) {
 class MonthViewContainer(view: View) : ViewContainer(view) {
     val titlesContainer = view as ViewGroup
 }
-
