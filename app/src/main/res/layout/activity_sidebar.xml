@@ -134,37 +134,42 @@
         android:orientation="vertical"
         andoird:clipChildren="false">
 
-        <!-- 여기에 동적으로 프로젝트 버튼이 추가됨 -->
-
-        <Button
-            android:id="@+id/project1"
+        <!-- 프로젝트 리스트 (RecyclerView) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/project_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.PlanIt.Button"
-            android:layout_gravity="center"
-            android:text="프로젝트 1"
-            android:textColor="@color/gray"
-            android:textSize="15sp"
-            android:background="@drawable/bg_project_button"
-            android:fontFamily="@font/pretendard_semibold"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
-            android:layout_marginHorizontal="50dp" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingHorizontal="8dp" />
+<!--        <Button-->
+<!--            android:id="@+id/project1"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            style="@style/Widget.PlanIt.Button"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:text="프로젝트 1"-->
+<!--            android:textColor="@color/gray"-->
+<!--            android:textSize="15sp"-->
+<!--            android:background="@drawable/bg_project_button"-->
+<!--            android:fontFamily="@font/pretendard_semibold"-->
+<!--            android:layout_marginTop="12dp"-->
+<!--            android:layout_marginBottom="12dp"-->
+<!--            android:layout_marginHorizontal="50dp" />-->
 
-        <Button
-            android:id="@+id/project2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.PlanIt.Button"
-            android:layout_gravity="center"
-            android:text="프로젝트 2"
-            android:textColor="@color/gray"
-            android:textSize="15sp"
-            android:background="@drawable/bg_project_button"
-            android:fontFamily="@font/pretendard_semibold"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
-            android:layout_marginHorizontal="50dp" />
+<!--        <Button-->
+<!--            android:id="@+id/project2"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            style="@style/Widget.PlanIt.Button"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:text="프로젝트 2"-->
+<!--            android:textColor="@color/gray"-->
+<!--            android:textSize="15sp"-->
+<!--            android:background="@drawable/bg_project_button"-->
+<!--            android:fontFamily="@font/pretendard_semibold"-->
+<!--            android:layout_marginTop="12dp"-->
+<!--            android:layout_marginBottom="12dp"-->
+<!--            android:layout_marginHorizontal="50dp" />-->
 
         <Button
             android:id="@+id/btn_add_project"

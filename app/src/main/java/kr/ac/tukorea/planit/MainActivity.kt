@@ -38,6 +38,13 @@ data class Task(
     val isCompleted: Boolean = false
 )
 
+// 1. 프로젝트 데이터 클래스 추가
+data class Project(
+    val id: Int,
+    val name: String,
+    val isSelected: Boolean = false
+)
+
 class MainActivity : AppCompatActivity() {
 
     private val TAG = this::class.simpleName
@@ -52,10 +59,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navDrawer: View
     // 드로어 내 뷰들
     private lateinit var currentProjectName: TextView
-    private lateinit var projectListContainer: LinearLayout
-    private lateinit var project1: Button
-    private lateinit var project2: Button
+    private lateinit var projectRecyclerView: RecyclerView
+    private lateinit var projectAdapter: ProjectAdapter
     private lateinit var btnAddProject: Button
+    private var selectedProjectId: Int? = null
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,7 +100,10 @@ class MainActivity : AppCompatActivity() {
         //네비게이션뷰
         setupDrawer()
         setupDrawerViews()
+        setupProjectRecyclerView()
         setupButtonListeners()
+
+        // TODO: 백엔드 데이터 로드
 
         // 샘플 데이터 로드
         //실제 백엔드와 연동시 주석처리해주시면 됩니다.
@@ -127,47 +138,92 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupDrawerViews() {
         // 드로어 내 뷰들 참조
+//        currentProjectName = navDrawer.findViewById(R.id.current_project_name)
+//        projectListContainer = navDrawer.findViewById(R.id.project_list_container)
+////        project1 = navDrawer.findViewById(R.id.project1)
+////        project2 = navDrawer.findViewById(R.id.project2)
+//        btnAddProject = navDrawer.findViewById(R.id.btn_add_project)
         currentProjectName = navDrawer.findViewById(R.id.current_project_name)
-        projectListContainer = navDrawer.findViewById(R.id.project_list_container)
-        project1 = navDrawer.findViewById(R.id.project1)
-        project2 = navDrawer.findViewById(R.id.project2)
+        projectRecyclerView = navDrawer.findViewById(R.id.project_recycler_view)
         btnAddProject = navDrawer.findViewById(R.id.btn_add_project)
     }
+    private fun setupProjectRecyclerView() {
+        projectAdapter = ProjectAdapter(
+            onProjectClick = { project ->
+                selectProject(project)
+            }
+        )?: throw IllegalStateException("projectAdapter not found")
 
+        projectRecyclerView.adapter = projectAdapter
+        projectRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        // 프로젝트 리스트 아이템 간격 설정
+        val itemDecoration = object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(
+                outRect: Rect,
+                view: View,
+                parent: RecyclerView,
+                state: RecyclerView.State
+            ) {
+                outRect.bottom = 16 // 아이템 간 16dp 간격
+            }
+        }
+        projectRecyclerView.addItemDecoration(itemDecoration)
+    }
     private fun setupButtonListeners() {
-        // 프로젝트 1 버튼 클릭 리스너
-        project1.setOnClickListener {
-            selectProject("프로젝트 1")
-        }
-
-        // 프로젝트 2 버튼 클릭 리스너
-        project2.setOnClickListener {
-            selectProject("프로젝트 2")
-        }
-
-        // 새 할 일 추가 버튼 클릭 리스너
         btnAddProject.setOnClickListener {
             showAddProjectDialog()
         }
     }
+//    private fun setupButtonListeners() {
+//        // 프로젝트 1 버튼 클릭 리스너
+//        project1.setOnClickListener {
+//            selectProject("프로젝트 1")
+//        }
+//
+//        // 프로젝트 2 버튼 클릭 리스너
+//        project2.setOnClickListener {
+//            selectProject("프로젝트 2")
+//        }
+//
+//        // 새 할 일 추가 버튼 클릭 리스너
+//        btnAddProject.setOnClickListener {
+//            showAddProjectDialog()
+//        }
+//    }
 
-    private fun selectProject(projectName: String) {
-        // 현재 프로젝트명 업데이트
-        currentProjectName.text = projectName
+    private fun selectProject(project: Project) {
+//        // 현재 프로젝트명 업데이트
+//        currentProjectName.text = projectName
+//
+//        // 선택된 프로젝트에 따른 처리
+//        Toast.makeText(this, "$projectName 선택됨", Toast.LENGTH_SHORT).show()
+//
+//        // 여기에 프로젝트 변경에 따른 메인 콘텐츠 업데이트 로직 추가
+//        updateMainContent(projectName)
+//
+//        // 드로어 닫기
+//        drawerLayout.closeDrawer(GravityCompat.START)
+        selectedProjectId = project.id
+        currentProjectName.text = project.name
 
-        // 선택된 프로젝트에 따른 처리
-        Toast.makeText(this, "$projectName 선택됨", Toast.LENGTH_SHORT).show()
+        // 어댑터에서 선택된 프로젝트 표시
+        projectAdapter.selectProject(project.id)
 
-        // 여기에 프로젝트 변경에 따른 메인 콘텐츠 업데이트 로직 추가
-        updateMainContent(projectName)
+        Toast.makeText(this, "${project.name} 선택됨", Toast.LENGTH_SHORT).show()
 
-        // 드로어 닫기
+        // 메인 콘텐츠 업데이트
+        updateMainContent(project.name)
+
+        // 선택된 프로젝트에 따른 태스크 필터링
+        //filterTasksByProject(project.name)
+
         drawerLayout.closeDrawer(GravityCompat.START)
     }
 
     private fun updateMainContent(projectName: String) {
-        // 메인 콘텐츠 영역 업데이트
         val mainContent = findViewById<LinearLayout>(R.id.main_view)
+        supportActionBar?.title = projectName
         // TODO: 특정 프로젝트 메인 페이지로 이동??
 
         // 예시: 액션바 타이틀 변경
@@ -178,42 +234,62 @@ class MainActivity : AppCompatActivity() {
         // 새 프로젝트 추가 다이얼로그 표시
         Toast.makeText(this, "새 프로젝트 추가 기능", Toast.LENGTH_SHORT).show()
 
-        // TODO: 새 프로젝트 추가
+        // TODO: id/name 타 액티비티에서 받아오기
+        val newProject = Project(
+            id = System.currentTimeMillis().toInt(),
+            name = "새 프로젝트 ${System.currentTimeMillis() % 1000}"
+        )
 
-        drawerLayout.closeDrawer(GravityCompat.START)
+        addProject(newProject)
+        Toast.makeText(this, "새 프로젝트가 추가되었습니다", Toast.LENGTH_SHORT).show()
+
+        //drawerLayout.closeDrawer(GravityCompat.START)
+    }
+
+    fun addProject(project: Project) {
+        projectAdapter.addProject(project)
+        // TODO: 서버에 프로젝트 저장
+        // apiService.addProject(project)
+    }
+
+    fun removeProject(projectId: Int) {
+        projectAdapter.removeProject(projectId)
+        // TODO: 서버에서 프로젝트 삭제
+        //근데 이거 쓰나?
+        // apiService.removeProject(projectId)
     }
 
     // 동적으로 프로젝트 버튼 추가하는 함수
-    fun addProjectButton(projectName: String) {
-        val button = Button(this)
-        button.text = projectName
-        button.setTextColor(resources.getColor(R.color.gray, null))
-        button.textSize = 15f
-        button.background = resources.getDrawable(R.drawable.bg_project_button, null)
-        button.typeface = resources.getFont(R.font.pretendard_semibold)
-
-        // 마진 설정
-        val layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        layoutParams.setMargins(
-            resources.getDimensionPixelSize(R.dimen.dp_50),
-            resources.getDimensionPixelSize(R.dimen.dp_12),
-            resources.getDimensionPixelSize(R.dimen.dp_50),
-            resources.getDimensionPixelSize(R.dimen.dp_12)
-        )
-        button.layoutParams = layoutParams
-
-        // 클릭 리스너 설정
-        button.setOnClickListener {
-            selectProject(projectName)
-        }
-
-        // 새 할 일 추가 버튼 앞에 추가
-        val addButtonIndex = projectListContainer.indexOfChild(btnAddProject)
-        projectListContainer.addView(button, addButtonIndex)
-    }
+//    fun addProjectButton(projectName: String) {
+//        val button = Button(this)
+//        button.text = projectName
+//        button.setTextColor(resources.getColor(R.color.gray, null))
+//        button.textSize = 15f
+//        button.background = resources.getDrawable(R.drawable.bg_project_button, null)
+//        button.typeface = resources.getFont(R.font.pretendard_semibold)
+//
+//        // 마진 설정
+//        val layoutParams = LinearLayout.LayoutParams(
+//            LinearLayout.LayoutParams.MATCH_PARENT,
+//            LinearLayout.LayoutParams.WRAP_CONTENT
+//        )
+//        layoutParams.setMargins(
+//            resources.getDimensionPixelSize(R.dimen.dp_50),
+//            resources.getDimensionPixelSize(R.dimen.dp_12),
+//            resources.getDimensionPixelSize(R.dimen.dp_50),
+//            resources.getDimensionPixelSize(R.dimen.dp_12)
+//        )
+//        button.layoutParams = layoutParams
+//
+//        // 클릭 리스너 설정
+//        button.setOnClickListener {
+//            selectProject(projectName)
+//        }
+//
+//        // 새 할 일 추가 버튼 앞에 추가
+//        val addButtonIndex = projectListContainer.indexOfChild(btnAddProject)
+//        projectListContainer.addView(button, addButtonIndex)
+//    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if (drawerToggle.onOptionsItemSelected(item)) {
@@ -537,5 +613,74 @@ class TaskAdapter(
             taskList.removeAt(index)
             notifyItemRemoved(index)
         }
+    }
+}
+
+// 2. 프로젝트 어댑터 클래스
+class ProjectAdapter(
+    private var projectList: MutableList<Project> = mutableListOf(),
+    private val onProjectClick: (Project) -> Unit
+) : RecyclerView.Adapter<ProjectAdapter.ProjectViewHolder>() {
+
+    inner class ProjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val projectButton: TextView = itemView.findViewById(R.id.project_name)
+
+        fun bind(project: Project) {
+            projectButton.text = project.name
+
+            // 선택된 프로젝트 표시 (선택사항)
+//            if (project.isSelected) {
+//                projectButton.setBackgroundColor(
+//                    ContextCompat.getColor(itemView.context, R.color.selected_project_color)
+//                )
+//            } else {
+//                projectButton.background =
+//                    ContextCompat.getDrawable(itemView.context, R.drawable.bg_project_button)
+//            }
+
+            projectButton.setOnClickListener {
+                onProjectClick(project)
+                // TODO: 프로젝트별 할 일 페이지 이동 : 이거까진 구현 힘들지도
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_sidebar_project, parent, false)
+        return ProjectViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
+        holder.bind(projectList[position])
+    }
+
+    override fun getItemCount(): Int = projectList.size
+
+    fun updateData(newList: List<Project>) {
+        projectList.clear()
+        projectList.addAll(newList)
+        notifyDataSetChanged()
+    }
+
+    fun addProject(project: Project) {
+        projectList.add(project)
+        notifyItemInserted(projectList.size - 1)
+    }
+
+    fun removeProject(projectId: Int) {
+        val index = projectList.indexOfFirst { it.id == projectId }
+        if (index != -1) {
+            projectList.removeAt(index)
+            notifyItemRemoved(index)
+        }
+    }
+
+    fun selectProject(projectId: Int) {
+        projectList.forEachIndexed { index, project ->
+            val newProject = project.copy(isSelected = project.id == projectId)
+            projectList[index] = newProject
+        }
+        notifyDataSetChanged()
     }
 }
