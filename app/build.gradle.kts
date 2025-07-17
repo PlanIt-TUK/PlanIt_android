@@ -60,7 +60,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.volley)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -81,4 +80,7 @@ dependencies {
 
     implementation ("com.google.android.material:material:1.10.0")
     implementation ("androidx.fragment:fragment-ktx:1.6.2")
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0") // 최신 버전 확인 권장
+    implementation ("com.android.volley:volley:1.2.1")
+
 }

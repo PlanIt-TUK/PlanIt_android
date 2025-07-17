@@ -104,6 +104,7 @@ class LoginActivity : AppCompatActivity() {
                         runOnUiThread {
                             // ✅ MainActivity → TeamMainActivity 로 전환
                             val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                            intent.putExtra("user_email", userEmail)
                             startActivity(intent)
                             finish()
                         }
