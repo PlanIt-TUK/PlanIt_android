@@ -103,6 +103,7 @@ class LoginActivity : AppCompatActivity() {
                         Log.d("LoginActivity", "백엔드 전송 성공: ${response.code}")
                         runOnUiThread {
                             val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                            intent.putExtra("user_email", userEmail)
                             startActivity(intent)
                             finish()
                         }

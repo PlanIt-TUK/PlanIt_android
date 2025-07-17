@@ -1,5 +1,6 @@
 package kr.ac.tukorea.planit
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
@@ -32,6 +33,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Callback
 import okhttp3.Call
 import okhttp3.Response
+import org.json.JSONObject
 import java.io.IOException
 
 // 1. 태스크 데이터 클래스
@@ -50,7 +52,7 @@ class MainActivity : AppCompatActivity() {
     private val TAG = this::class.simpleName
     private lateinit var binding: CalendarMainViewBinding
     // 사용자 이메일 받아오기
-    private val currentUserEmail = intent.getStringExtra("user_email") ?: ""
+    private lateinit var currentUserEmail: String
     // RecyclerView와 Adapter 변수 선언
     private lateinit var recyclerView: RecyclerView
     private lateinit var taskAdapter: TaskAdapter
@@ -59,6 +61,9 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        currentUserEmail = intent.getStringExtra("user_email") ?: ""
+        Log.d("TeamMainActivity", "User Email: $currentUserEmail")
+
         enableEdgeToEdge()
 
         binding = CalendarMainViewBinding.inflate(layoutInflater)
@@ -84,13 +89,13 @@ class MainActivity : AppCompatActivity() {
     private fun handleAddTaskClick() {
         val newTask = Task(
             id = System.currentTimeMillis().toInt(),
-            teamName = "Team Example",
+            teamName = "project a",
             taskName = "새 일정 제목",
             taskStart = "2025-07-10 10:00:00",
             taskEnd = "2025-07-20 22:00:00",
             taskState = false,
             taskTarget = "프로젝트 X",
-            userEmail = "user@example.com"
+            userEmail = "who1061@naver.com"
         )
         val json = """
         {
@@ -136,65 +141,90 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+        val intent = Intent(this, TeamMainActivity::class.java)
+        intent.putExtra("user_email", currentUserEmail)
+        intent.putExtra("team_name", "project a")
+        startActivity(intent)
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupCalendar() {
-        // 캘린더에서 날짜가 선택될 때 호출되는 리스너 설정
         with(binding) {
             myCalendar.setOnDateSelectedListener { selectedDate ->
-                // 선택된 날짜 표시
-                tvSelectedDate.text = "선택된 날짜: $selectedDate"
-                // 선택된 날짜에 따른 추가 작업
-                // TODO: 선택된 날짜별 할 일 불러오기
-                // 날짜에 해당하는 태스크만 필터링
+                Log.d("MainActivity", "선택된 날짜: $selectedDate")
+                val inputFormatter = DateTimeFormatter.ofPattern("yyyy.M.d")
+                val parsedDate = LocalDate.parse(selectedDate, inputFormatter)
+                val isoString = parsedDate.atStartOfDay().toString()
 
-                try {
-                    val inputFormatter = DateTimeFormatter.ofPattern("yyyy.M.d") // ex: "2025.7.18"
-                    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                    val selectedLocalDate = LocalDate.parse(selectedDate, inputFormatter)
+                // 1) 서버로 보낼 JSON
+                val json = """
+                    {
+                      "user_email": "$currentUserEmail",
+                      "task_start": "$isoString"
+                    }
+                """.trimIndent()
 
-                    Log.d("Debug", "selectedDate: $selectedLocalDate")
+                // 2) OkHttp 요청 준비
+                val client = OkHttpClient()
+                val mediaType = "application/json; charset=utf-8".toMediaType()
+                val requestBody = json.toRequestBody(mediaType)
 
-                    val filteredTasks = sampleTasks.filter { task ->
-                        // 날짜 필터는 기존대로 유지
-                        val dateMatches = try {
-                            val hasStart = task.taskStart.isNotBlank()
-                            val hasEnd = task.taskEnd.isNotBlank()
+                val request = Request.Builder()
+                    .url("http://56.155.134.194:8000/load_task") // ✅ 실제 서버 주소로 교체
+                    .post(requestBody)
+                    .build()
 
-                            val startDate = if (hasStart)
-                                LocalDateTime.parse(task.taskStart, dateFormatter).toLocalDate()
-                            else null
 
-                            val endDate = if (hasEnd)
-                                LocalDateTime.parse(task.taskEnd, dateFormatter).toLocalDate()
-                            else null
-
-                            when {
-                                hasStart && hasEnd -> !selectedLocalDate.isBefore(startDate) && !selectedLocalDate.isAfter(endDate)
-                                hasStart -> selectedLocalDate == startDate
-                                hasEnd -> selectedLocalDate == endDate
-                                else -> false
-                            }
-                        } catch (e: Exception) {
-                            false
+                // 3) 비동기 요청
+                client.newCall(request).enqueue(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        Log.e("MainActivity", "태스크 로드 실패", e)
+                        runOnUiThread {
+                            Toast.makeText(this@MainActivity, "서버 연결 실패", Toast.LENGTH_SHORT).show()
+                            taskAdapter.updateData(emptyList())
                         }
-                        // 여기에 이메일 필터 추가!
-                        dateMatches && (task.userEmail == currentUserEmail)
                     }
 
-                    Log.d("MainActivity", "Filtered tasks count: ${filteredTasks.size}")
-                    filteredTasks.forEach { task ->
-                        Log.d("MainActivity", "Task: id=${task.id}, taskStart=${task.taskStart}, taskEnd=${task.taskEnd}, title=${task.taskName}")
+                    override fun onResponse(call: Call, response: Response) {
+                        if (response.isSuccessful) {
+                            response.body?.let { responseBody ->
+                                val responseString = responseBody.string()
+                                Log.d("load_task", "서버 응답 Raw: $responseString") // 🔥 여기서 응답 전문 출력
+                                val tasks = parseTasks(responseString) // ✅ 아래 함수 참고
+                                Log.d("MainActivity", "$tasks")
+                                runOnUiThread {
+                                    taskAdapter.updateData(tasks)
+                                }
+                            }
+                        } else {
+                            Log.e("MainActivity", "서버 응답 오류: ${response.code}")
+                            runOnUiThread {
+                                taskAdapter.updateData(emptyList())
+                            }
+                        }
                     }
-
-                    taskAdapter.updateData(filteredTasks)
-
-                } catch (e: Exception) {
-                    Log.e("MainActivity", "날짜 파싱 오류", e)
-                    taskAdapter.updateData(emptyList())
-                }
+                })
             }
         }
+    }
+    private fun parseTasks(json: String): List<Task> {
+        val jsonObj = JSONObject(json)
+        val jsonArray = jsonObj.getJSONArray("task")
+        val tasks = mutableListOf<Task>()
+        for (i in 0 until jsonArray.length()) {
+            val item = jsonArray.getJSONObject(i)
+            val task = Task(
+                id = item.optInt("id"),
+                teamName = item.optString("team_name"),
+                taskName = item.optString("task_name"),
+                taskStart = item.optString("task_start"),
+                taskEnd = item.optString("task_end"),
+                taskState = item.optBoolean("task_state"),
+                taskTarget = item.optString("task_target"),
+                userEmail = item.optString("user_email")
+            )
+            tasks.add(task)
+        }
+        return tasks
     }
 
     private fun setupRecyclerView() {
