@@ -24,6 +24,9 @@ import kr.ac.tukorea.planit.databinding.CalendarMainViewBinding
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import android.content.Intent
+import androidx.activity.result.contract.ActivityResultContracts
+
 
 // 1. 태스크 데이터 클래스
 
@@ -47,6 +50,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var taskAdapter: TaskAdapter
     private lateinit var sampleTasks: List<Task>
 
+    private val addTaskLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                // TODO: 실제 서버 연동 시 최신 데이터 재로드
+                loadSampleTasks()          // 데모용
+                taskAdapter.updateData(sampleTasks)
+            }
+        }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +80,12 @@ class MainActivity : AppCompatActivity() {
         //실제 백엔드와 연동시 주석처리해주시면 됩니다.
         loadSampleTasks()
         binding.myCalendar.selectToday()
+
+        binding.myCalendar.setOnClickListener {
+            val intent = Intent(this,
+                kr.ac.tukorea.planit.ui.add.AddTaskActivity::class.java)
+            addTaskLauncher.launch(intent)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
