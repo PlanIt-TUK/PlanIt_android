@@ -198,6 +198,7 @@ class MyCalendar @JvmOverloads constructor(
 
                     // 날짜 클릭 리스너 - 미래 날짜는 선택 불가
                     container.textView.setOnClickListener {
+                        Log.d("MyCalendar", "날짜 클릭됨: ${data.date}")
                         // 현재 월에 속한 과거 또는 오늘 날짜만 선택 가능
 //                        if (data.position == DayPosition.MonthDate && !isFutureDate) {
 //                            if (selectedDate != data.date) {
