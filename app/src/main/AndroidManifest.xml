@@ -22,8 +22,16 @@
             android:name=".TeamMainActivity"
             android:exported="false" />
         <activity
-            android:name=".ProjectManagerActivity"
+            android:name=".OwnerProjectManagerActivity"
             android:exported="false" />
+        <activity
+            android:name=".MemberProjectManagerActivity"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".AddTaskActivity"
             android:exported="false" />
@@ -36,12 +44,9 @@
         <!-- ① LoginActivity: VIEW 인텐트-필터 제거 -->
         <activity
             android:name=".LoginActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
+            android:exported="false" />
+
+
 
         <!-- ② AuthCodeHandlerActivity: 딥링크 전담 -->
         <activity
