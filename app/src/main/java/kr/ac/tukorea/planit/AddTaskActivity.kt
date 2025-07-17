@@ -17,7 +17,7 @@ import kotlin.concurrent.thread
 class AddTaskActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddTaskBinding
-
+    private lateinit var currentUserEmail: String
     private var selectedColor: Int       = 0         // 0‑11
     private var startDate:    LocalDate? = null
     private var endDate:      LocalDate? = null
@@ -30,13 +30,8 @@ class AddTaskActivity : AppCompatActivity() {
         binding = ActivityAddTaskBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        currentUserEmail = intent.getStringExtra("user_email") ?: ""
         WindowInsetsControllerCompat(window, binding.root).isAppearanceLightStatusBars = true
-
-        userEmail = getSharedPreferences("auth", MODE_PRIVATE)
-            .getString("USER_EMAIL", null) ?: run {
-            toast("로그인 정보가 없습니다")
-            finish(); return
-        }
 
         initDatePickers()
         initColorPicker()

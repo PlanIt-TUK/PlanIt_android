@@ -77,6 +77,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var project1: Button
     private lateinit var project2: Button
     private lateinit var btnAddProject: Button
+    private lateinit var binding2: CalendarMainViewBinding
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,18 +85,30 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
+        binding2 = CalendarMainViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
 //            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 //            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
 //            insets
 //        }
-        binding.mainView.btnAddTask.setOnClickListener{
-            // TODO: 할 일 추가 ui 접목하여 유저 입력 받아오기
-            addNewTask(title="새 할일","12:30","프로젝트3")
-            Toast.makeText(this,"할 일 생성: 새 할일", Toast.LENGTH_SHORT).show()
-            // TODO: 백엔드 연결 -> 할 일 서버에 저장(아님말고)
+//        binding.mainView.btnAddTask.setOnClickListener{
+//            // TODO: 할 일 추가 ui 접목하여 유저 입력 받아오기
+//            //addNewTask(title="새 할일","12:30","프로젝트3")
+//            Toast.makeText(this,"할 일 생성: 새 할일", Toast.LENGTH_SHORT).show()
+//            // TODO: 백엔드 연결 -> 할 일 서버에 저장(아님말고)
+//        }
+        // onCreate 내부, btnAddTask 클릭 리스너를 교체
+        binding.mainView.btnAddTask.setOnClickListener {
+            // AddTaskActivity로 이동
+            val intent = Intent(
+                this,
+                kr.ac.tukorea.planit.ui.add.AddTaskActivity::class.java
+            )
+            intent.putExtra("user_email", "example@gmail.com")
+            addTaskLauncher.launch(intent)
         }
+
         findViewById<ImageView>(R.id.icon_hamberger).setOnClickListener{
             // TODO: 네비게이션 바 펼치기
             if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -118,9 +131,9 @@ class MainActivity : AppCompatActivity() {
         // 샘플 데이터 로드
         //실제 백엔드와 연동시 주석처리해주시면 됩니다.
         loadSampleTasks()
-        binding.myCalendar.selectToday()
+        binding2.myCalendar.selectToday()
 
-        binding.myCalendar.setOnClickListener {
+        binding2.myCalendar.setOnClickListener {
             val intent = Intent(this,
                 kr.ac.tukorea.planit.ui.add.AddTaskActivity::class.java)
             addTaskLauncher.launch(intent)

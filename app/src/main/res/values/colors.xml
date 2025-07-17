@@ -36,6 +36,4 @@
     <color name="todo_undo">#BCBCBC</color>
     <color name="todo_complete">#90F7A0</color>
     <color name="temp_red">#ff0000</color>
-    <color name="light_blue">#EFF5FF</color>
-
 </resources>
