@@ -21,7 +21,6 @@ class OwnerProjectManagerActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-
         // 0. 화면 비율 채우기
         enableEdgeToEdge()
 
