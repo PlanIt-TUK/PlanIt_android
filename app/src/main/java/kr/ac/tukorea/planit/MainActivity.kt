@@ -142,6 +142,9 @@ class MainActivity : AppCompatActivity() {
         setupProjectRecyclerView()
         setupButtonListeners()
 
+        //맨 위 개인프로젝트 넣는 부분
+        projectAdapter.addProject(Project(0,"개인 프로젝트", false)) //id를 뭘 넣어야되지
+
         // 샘플 데이터 로드
         //실제 백엔드와 연동시 주석처리해주시면 됩니다.
         loadSampleTasks()
@@ -241,7 +244,10 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, "${project.name} 선택됨", Toast.LENGTH_SHORT).show()
 
         // 메인 콘텐츠 업데이트
-        updateMainContent(project.name)
+        if (project.id!=0){ //id가 0 : 개인 프로젝트
+            updateMainContent(project.name)
+        }
+
 
         // 선택된 프로젝트에 따른 태스크 필터링
         //filterTasksByProject(project.name)
@@ -255,7 +261,8 @@ class MainActivity : AppCompatActivity() {
         // 프로젝트 메인 페이지로 이동
         val intent= Intent(this, TeamMainActivity::class.java)
         startActivity(intent)
-        finish()
+        //이거 지우니까 뒤로가기 누르면 앱이 꺼져요
+        //finish()
 
         // 예시: 액션바 타이틀 변경
         supportActionBar?.title = projectName

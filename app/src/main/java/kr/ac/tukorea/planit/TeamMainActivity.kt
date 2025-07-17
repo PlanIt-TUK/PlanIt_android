@@ -1,6 +1,9 @@
 package kr.ac.tukorea.planit
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
@@ -38,6 +41,11 @@ class TeamMainActivity : AppCompatActivity() {
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
             insets
+        }
+        //탑바 세팅 버튼
+        findViewById<ImageButton>(R.id.btnSetting).setOnClickListener{
+            val intent=Intent(this, ProjectManagerActivity::class.java)
+            startActivity(intent)
         }
 
         val tabLayout = findViewById<TabLayout>(R.id.tabLayout)

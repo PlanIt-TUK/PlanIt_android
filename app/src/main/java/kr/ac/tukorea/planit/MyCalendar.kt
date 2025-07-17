@@ -150,7 +150,7 @@ class MyCalendar @JvmOverloads constructor(
 //                            container.textView.setTextColor(Color.GRAY)
 //                        }
                         data.position == DayPosition.MonthDate -> {
-
+//                      날짜에 색깔이 생긴다면 여기로 오라
                             // 현재 월에 속한 과거 또는 오늘 날짜는 요일에 따라 색상 설정
 //                            when (data.date.dayOfWeek) {
 //                                DayOfWeek.SUNDAY -> container.textView.setTextColor(Color.RED)

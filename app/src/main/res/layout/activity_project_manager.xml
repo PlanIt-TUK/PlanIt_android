@@ -189,6 +189,7 @@
                     android:textColor="@color/gray"/>
               </LinearLayout>
 
+
               <ImageView
                   android:id="@+id/icLeader"
                   android:layout_width="20dp"
