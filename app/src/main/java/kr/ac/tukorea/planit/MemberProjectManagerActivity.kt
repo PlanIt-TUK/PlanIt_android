@@ -1,5 +1,6 @@
 package kr.ac.tukorea.planit
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -21,14 +22,20 @@ class MemberProjectManagerActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-
-        // 0. 화면 비율 채우기
+        // 0. 화면 비율 채우기 및 뒤로가기
         enableEdgeToEdge()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        binding.btnBack.setOnClickListener {
+            val intent = Intent(this@MemberProjectManagerActivity, TeamMainActivity::class.java)
+            startActivity(intent)
+            finish()
+            overridePendingTransition(0, R.anim.slide_out_down)
         }
 
         // 1. 팀원 불러오기

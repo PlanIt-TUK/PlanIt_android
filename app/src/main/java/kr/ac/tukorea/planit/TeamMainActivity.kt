@@ -59,14 +59,12 @@ class TeamMainActivity : AppCompatActivity() {
                     runOnUiThread {
                         val intent = Intent(this@TeamMainActivity, OwnerProjectManagerActivity::class.java)
                         startActivity(intent)
-                        finish()
                     }
                 }
                 else {
                     runOnUiThread {
                         val intent = Intent(this@TeamMainActivity, MemberProjectManagerActivity::class.java)
                         startActivity(intent)
-                        finish()
                     }
                 }
             }.start()
