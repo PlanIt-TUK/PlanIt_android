@@ -167,52 +167,52 @@
               android:layout_marginTop="8dp">
 
             <!-- 구성원 1 (팀장) -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingVertical="8dp">
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:paddingVertical="8dp">-->
 
-              <ImageView
-                  android:layout_width="36dp"
-                  android:layout_height="36dp"
-                  android:src="@drawable/ic_member"
-                  android:layout_marginEnd="8dp" />
+<!--              <ImageView-->
+<!--                  android:layout_width="36dp"-->
+<!--                  android:layout_height="36dp"-->
+<!--                  android:src="@drawable/ic_member"-->
+<!--                  android:layout_marginEnd="8dp" />-->
 
-              <LinearLayout
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:orientation="vertical"
-                  android:layout_marginEnd="15dp">
+<!--              <LinearLayout-->
+<!--                  android:layout_width="wrap_content"-->
+<!--                  android:layout_height="wrap_content"-->
+<!--                  android:orientation="vertical"-->
+<!--                  android:layout_marginEnd="15dp">-->
 
-                <TextView
-                    android:id="@+id/textMemberName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="조용원"
-                    android:textSize="16sp"
-                    android:fontFamily="@font/pretendard_medium"
-                    android:textColor="#4B5563"/>
+<!--                <TextView-->
+<!--                    android:id="@+id/textMemberName"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="조용원"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:fontFamily="@font/pretendard_medium"-->
+<!--                    android:textColor="#4B5563"/>-->
 
-                <TextView
-                    android:id="@+id/textMemberRole"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="팀장"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/pretendard_medium"
-                    android:textColor="@color/gray"/>
-              </LinearLayout>
+<!--                <TextView-->
+<!--                    android:id="@+id/textMemberRole"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="팀장"-->
+<!--                    android:textSize="14sp"-->
+<!--                    android:fontFamily="@font/pretendard_medium"-->
+<!--                    android:textColor="@color/gray"/>-->
+<!--              </LinearLayout>-->
 
-              <ImageView
-                  android:id="@+id/icLeader"
-                  android:layout_width="20dp"
-                  android:layout_height="20dp"
-                  android:src="@drawable/ic_star"
-                  android:contentDescription="팀장 표시"
-                  android:visibility="visible"/>
-            </LinearLayout>
+<!--              <ImageView-->
+<!--                  android:id="@+id/icLeader"-->
+<!--                  android:layout_width="20dp"-->
+<!--                  android:layout_height="20dp"-->
+<!--                  android:src="@drawable/ic_star"-->
+<!--                  android:contentDescription="팀장 표시"-->
+<!--                  android:visibility="visible"/>-->
+<!--            </LinearLayout>-->
 
             <!-- 추가 구성원들은 동일 구조 반복 -->
           </LinearLayout>

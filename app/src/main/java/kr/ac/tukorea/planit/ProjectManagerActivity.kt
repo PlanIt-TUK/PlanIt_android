@@ -16,8 +16,7 @@ import android.view.Gravity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import android.widget.Toast
-
-
+import androidx.recyclerview.widget.RecyclerView
 
 
 class ProjectManagerActivity : ComponentActivity() {
@@ -54,6 +53,9 @@ class ProjectManagerActivity : ComponentActivity() {
         checkIsLeader(userEmail, projectId)
         fetchTeamMembers(projectId)
 
+        //더미데이터 팀원 삽입
+        // TODO: 서버에서 팀원 데이터 불러오기
+        addSingleDummyMember()
 
         val currentUserEmail = intent.getStringExtra("email") ?: ""
 
@@ -71,6 +73,46 @@ class ProjectManagerActivity : ComponentActivity() {
         }
     }
 
+    private fun addSingleDummyMember() {
+        // TODO: 서버에서 팀원 데이터 불러오기 : (이름,이메일,팀장여부)
+
+//        displayTeamMembers메소드에 나와있는대로라면 여기선
+//        1. 팀원 이름/이메일 불러오기
+//        2. 1을 TeamMemberList로 만들기
+//        3. displayTeamMembers(${2에서 만든 리스트명}) 으로 하시면 적용 될 것 같네요.
+//        팀장 정보는 딱히 여기서 적용할 필요 없어보입니다.
+        val singleDummyMembers = listOf(
+            TeamMember("테스트유저1", "test1@example.com"),
+            TeamMember("테스트유저2", "test2@example.com"),
+            TeamMember("테스트유저3", "test3@example.com"),
+            TeamMember("개발자A", "dev.a@example.com"),
+            TeamMember("개발자B", "dev.b@example.com")
+        )
+
+        //val randomMember = singleDummyMembers.random()
+
+        // 기존 팀원 목록에 새 멤버 추가 (실제로는 서버 연동 대신 로컬에서 처리)
+        val currentMembers = getCurrentDisplayedMembers()
+        //val updatedMembers = currentMembers + randomMember
+        val updatedMembers = currentMembers + singleDummyMembers
+
+        displayTeamMembers(updatedMembers)
+
+        //Toast.makeText(this, "${randomMember.name}님이 팀에 추가되었습니다", Toast.LENGTH_SHORT).show()
+    }
+    private fun getCurrentDisplayedMembers(): List<TeamMember> {
+        // 현재 화면에 표시된 팀원들을 가져오는 함수
+        // 실제 구현에서는 멤버 리스트를 클래스 변수로 관리하는 것이 좋습니다
+        val members = mutableListOf<TeamMember>()
+
+        // 현재 로그인한 사용자 정보
+//        val currentUserEmail = intent.getStringExtra("email") ?: intent.getStringExtra("userEmail") ?: ""
+//        if (currentUserEmail.isNotEmpty()) {
+//            members.add(TeamMember("나 (팀장)", currentUserEmail))
+//        }
+
+        return members
+    }
 
     private fun fetchTeamMembers(projectId: String) {
         Thread {
@@ -352,4 +394,3 @@ class ProjectManagerActivity : ComponentActivity() {
 
 
 }
-
