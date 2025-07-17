@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PlanIt</string>
+    <string name="navigation_drawer_open">네비게이션 드로어 열기</string>
+    <string name="navigation_drawer_close">네비게이션 드로어 닫기</string>
 </resources>
