@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_main"
+    android:id="@+id/main">
+
+  <!-- 🔸 가이드라인 -->
+  <androidx.constraintlayout.widget.Guideline
+      android:id="@+id/guideline_start"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      app:layout_constraintGuide_percent="0.05" />
+
+  <androidx.constraintlayout.widget.Guideline
+      android:id="@+id/guideline_end"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      app:layout_constraintGuide_percent="0.95" />
+
+  <androidx.constraintlayout.widget.Guideline
+      android:id="@+id/guideline_top"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      app:layout_constraintGuide_percent="0.08" />
+
+  <!-- 🔹 TopBar -->
+  <ImageButton
+      android:id="@+id/btnBack"
+      android:layout_width="24dp"
+      android:layout_height="24dp"
+      android:background="@android:color/transparent"
+      android:src="@drawable/ic_back"
+      android:contentDescription="뒤로가기"
+      app:layout_constraintStart_toStartOf="@id/guideline_start"
+      app:layout_constraintTop_toTopOf="@id/guideline_top"
+      app:layout_constraintBottom_toBottomOf="@+id/textTitle"
+      app:tint="@color/black"/>
+
+  <TextView
+      android:id="@+id/textTitle"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:text="프로젝트 관리"
+      android:textSize="18sp"
+      android:textColor="@color/black"
+      android:fontFamily="@font/pretendard_bold"
+      android:gravity="center"
+      app:layout_constraintTop_toBottomOf="@id/guideline_top"
+      app:layout_constraintStart_toStartOf="@id/guideline_start"
+      app:layout_constraintEnd_toEndOf="@id/guideline_end" />
+
+  <!-- 🔹 Body -->
+  <ScrollView
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:layout_marginTop="16dp"
+      android:fillViewport="true"
+      android:scrollbars="none"
+      app:layout_constraintTop_toBottomOf="@id/textTitle"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="@id/guideline_start"
+      app:layout_constraintEnd_toEndOf="@id/guideline_end">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+      <!-- 🔸 프로젝트 초대 -->
+      <androidx.cardview.widget.CardView
+          android:id="@+id/inviteCard"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="16dp"
+          android:background="@drawable/bg_card"
+          app:cardCornerRadius="12dp"
+          app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+          <TextView
+              android:id="@+id/textInviteTitle"
+              android:text="프로젝트 초대"
+              android:textSize="14sp"
+              android:fontFamily="@font/pretendard_semibold"
+              android:textColor="@color/black"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"/>
+
+          <EditText
+              android:id="@+id/editInviteEmail"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:maxLines="1"
+              android:layout_marginTop="8dp"
+              android:fontFamily="@font/pretendard_medium"
+              android:background="@drawable/bg_input_box"
+              android:inputType="textEmailAddress"
+              android:imeOptions="actionDone"
+              android:hint="이메일을 입력하세요"
+              android:padding="12dp"
+              android:textSize="16sp"/>
+        </LinearLayout>
+      </androidx.cardview.widget.CardView>
+
+      <!-- 🔸 현재 인원 -->
+      <androidx.cardview.widget.CardView
+          android:id="@+id/memberCard"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="16dp"
+          android:background="@drawable/bg_card"
+          app:cardCornerRadius="12dp"
+          app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+          <TextView
+              android:id="@+id/textMemberTitle"
+              android:text="현재 인원"
+              android:textSize="14sp"
+              android:fontFamily="@font/pretendard_semibold"
+              android:textColor="@color/black"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content" />
+
+          <!-- 구성원 리스트 예시 -->
+          <LinearLayout
+              android:id="@+id/memberList"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:layout_marginTop="8dp">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="8dp">
+
+              <!-- 프로필 이미지 -->
+              <ImageView
+                  android:id="@+id/imgProfile"
+                  android:layout_width="36dp"
+                  android:layout_height="36dp"
+                  android:layout_marginStart="16dp"
+                  android:src="@drawable/ic_member"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toTopOf="parent"
+                  app:layout_constraintBottom_toBottomOf="parent" />
+
+              <!-- 이름 + 역할 -->
+              <LinearLayout
+                  android:id="@+id/layoutTextInfo"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:layout_marginStart="15dp"
+                  android:layout_marginEnd="8dp"
+                  app:layout_constraintStart_toEndOf="@id/imgProfile"
+                  app:layout_constraintTop_toTopOf="@id/imgProfile"
+                  app:layout_constraintBottom_toBottomOf="@id/imgProfile">
+
+                <TextView
+                    android:id="@+id/textMemberName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="조용원"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:textColor="#4B5563" />
+
+                <TextView
+                    android:id="@+id/textMemberRole"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="팀장"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:textColor="@color/gray" />
+              </LinearLayout>
+
+              <!-- 팀장 아이콘 -->
+              <ImageView
+                  android:id="@+id/icLeader"
+                  android:layout_width="20dp"
+                  android:layout_height="20dp"
+                  android:layout_marginEnd="8dp"
+                  android:layout_marginStart="15dp"
+                  android:src="@drawable/ic_star"
+                  android:contentDescription="팀장 표시"
+                  android:visibility="visible"
+                  app:layout_constraintStart_toEndOf="@id/layoutTextInfo"
+                  app:layout_constraintTop_toTopOf="parent"
+                  app:layout_constraintBottom_toBottomOf="parent" />
+
+              <!-- 삭제 버튼 -->
+              <ImageButton
+                  android:id="@+id/btnDeleteMember"
+                  android:layout_width="50dp"
+                  android:layout_height="40dp"
+                  android:layout_marginEnd="16dp"
+                  android:background="@color/trans"
+                  android:src="@drawable/ic_minus"
+                  android:contentDescription="멤버 삭제"
+                  android:visibility="gone"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintTop_toTopOf="parent"
+                  app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+            <!-- 추가 구성원들은 동일 구조 반복 -->
+          </LinearLayout>
+        </LinearLayout>
+      </androidx.cardview.widget.CardView>
+
+      <!-- 🔸 프로젝트 삭제 경고 -->
+      <androidx.cardview.widget.CardView
+          android:id="@+id/deleteCard"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="16dp"
+          android:background="@drawable/bg_card"
+          app:cardCornerRadius="16dp"
+          app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+          <!-- 경고 메시지 영역 -->
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_warning"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="경고"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="프로젝트를 삭제하시면 모든 데이터가\n영구적으로 삭제됩니다."
+                android:textSize="13sp"
+                android:lineSpacingExtra="2dp"
+                android:textColor="#4B5563"
+                android:fontFamily="@font/pretendard_medium" />
+          </LinearLayout>
+
+          <!-- 삭제 버튼 -->
+          <com.google.android.material.button.MaterialButton
+              android:id="@+id/btnDeleteProject"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              style="@style/Widget.PlanIt.Button"
+              android:layout_marginTop="16dp"
+              app:iconGravity="textStart"
+              app:iconPadding="12dp"
+              app:icon="@drawable/ic_trash"
+              android:background="@drawable/bg_button_red"
+              android:text="프로젝트 나가기"
+              android:textColor="@android:color/white"
+              android:fontFamily="@font/pretendard_bold"
+              android:textSize="14sp"
+              android:gravity="center"
+              android:drawablePadding="8dp"
+              android:paddingStart="16dp"
+              android:paddingEnd="16dp"/>
+        </LinearLayout>
+      </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+  </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

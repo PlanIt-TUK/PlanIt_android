@@ -106,9 +106,12 @@
               android:id="@+id/editInviteEmail"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:maxLines="1"
               android:layout_marginTop="8dp"
               android:fontFamily="@font/pretendard_medium"
               android:background="@drawable/bg_input_box"
+              android:inputType="textEmailAddress"
+              android:imeOptions="actionDone"
               android:hint="이메일을 입력하세요"
               android:padding="12dp"
               android:textSize="16sp"/>
@@ -150,25 +153,34 @@
               android:orientation="vertical"
               android:layout_marginTop="8dp">
 
-            <!-- 구성원 1 (팀장) -->
-            <LinearLayout
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
                 android:paddingVertical="8dp">
 
+              <!-- 프로필 이미지 -->
               <ImageView
+                  android:id="@+id/imgProfile"
                   android:layout_width="36dp"
                   android:layout_height="36dp"
+                  android:layout_marginStart="16dp"
                   android:src="@drawable/ic_member"
-                  android:layout_marginEnd="8dp" />
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toTopOf="parent"
+                  app:layout_constraintBottom_toBottomOf="parent" />
 
+              <!-- 이름 + 역할 -->
               <LinearLayout
+                  android:id="@+id/layoutTextInfo"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:orientation="vertical"
-                  android:layout_marginEnd="15dp">
+                  android:layout_marginStart="15dp"
+                  android:layout_marginEnd="8dp"
+                  app:layout_constraintStart_toEndOf="@id/imgProfile"
+                  app:layout_constraintTop_toTopOf="@id/imgProfile"
+                  app:layout_constraintBottom_toBottomOf="@id/imgProfile">
 
                 <TextView
                     android:id="@+id/textMemberName"
@@ -177,7 +189,7 @@
                     android:text="조용원"
                     android:textSize="16sp"
                     android:fontFamily="@font/pretendard_medium"
-                    android:textColor="#4B5563"/>
+                    android:textColor="#4B5563" />
 
                 <TextView
                     android:id="@+id/textMemberRole"
@@ -186,18 +198,39 @@
                     android:text="팀장"
                     android:textSize="14sp"
                     android:fontFamily="@font/pretendard_medium"
-                    android:textColor="@color/gray"/>
+                    android:textColor="@color/gray" />
               </LinearLayout>
 
-
+              <!-- 팀장 아이콘 -->
               <ImageView
                   android:id="@+id/icLeader"
                   android:layout_width="20dp"
                   android:layout_height="20dp"
+                  android:layout_marginEnd="8dp"
+                  android:layout_marginStart="15dp"
                   android:src="@drawable/ic_star"
                   android:contentDescription="팀장 표시"
-                  android:visibility="visible"/>
-            </LinearLayout>
+                  android:visibility="visible"
+                  app:layout_constraintStart_toEndOf="@id/layoutTextInfo"
+                  app:layout_constraintTop_toTopOf="parent"
+                  app:layout_constraintBottom_toBottomOf="parent" />
+
+              <!-- 삭제 버튼 -->
+              <ImageButton
+                  android:id="@+id/btnDeleteMember"
+                  android:layout_width="50dp"
+                  android:layout_height="40dp"
+                  android:layout_marginEnd="16dp"
+                  android:background="@color/trans"
+                  android:src="@drawable/ic_minus"
+                  android:contentDescription="멤버 삭제"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintTop_toTopOf="parent"
+                  app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 
             <!-- 추가 구성원들은 동일 구조 반복 -->
           </LinearLayout>
